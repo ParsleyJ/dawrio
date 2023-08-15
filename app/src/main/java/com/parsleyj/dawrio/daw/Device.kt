@@ -83,61 +83,10 @@ abstract class Device protected constructor(
         external fun destroy(deviceAddress: Long)
         external fun createSinOsc(): Long
         external fun createSawOsc(): Long
+        external fun createSquareOsc(): Long
+        external fun createLFO(): Long
+        external fun createVolume(amount: Float): Long
         external fun createConstEmitter(value: Float): Long
-    }
-}
-
-class SinOsc internal constructor(
-    label: String,
-    description: String = "",
-    handle: DeviceHandle = DeviceHandle(createSinOsc()),
-) : Device(label, description, handle) {
-    override val type: DeviceType
-        get() = DeviceType.Generator
-
-    val outAudioL: OutPort
-        get() = OutPort(this, "audioL", 0)
-    val outAudioR: OutPort
-        get() = OutPort(this, "audioR", 1)
-    val inFrequency: InPort
-        get() = InPort(this, "frequency", 0)
-}
-
-class SawOsc internal constructor(
-    label:String,
-    description: String = "",
-    handle:DeviceHandle = DeviceHandle(createSawOsc()),
-): Device(label, description, handle) {
-    override val type: DeviceType
-        get() = DeviceType.Generator
-
-    val outAudioL: OutPort
-        get() = OutPort(this, "audioL", 0)
-    val outAudioR: OutPort
-        get() = OutPort(this, "audioR", 1)
-    val inFrequency: InPort
-        get() = InPort(this, "frequency", 0)
-}
-
-class ConstEmitter internal constructor(
-    initialValue: Float,
-    label: String,
-    description: String = "",
-    handle: DeviceHandle = DeviceHandle(createConstEmitter(initialValue))
-) : Device(label, description, handle) {
-    override val type: DeviceType
-        get() = DeviceType.Generator
-
-    val outPort: OutPort
-        get() = OutPort(this, "constant", 0)
-
-    var value: Float
-        get() = getValue(handle.toAddress)
-        set(value) = setValue(handle.toAddress, value)
-
-    companion object {
-        private external fun setValue(handle: Long, float: Float)
-        private external fun getValue(handle: Long): Float
     }
 }
 

@@ -33,7 +33,10 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         Device.h
         ConstEmitter.cpp
         Route.cpp
-        SawOsc.cpp)
+        SawOsc.cpp
+        LFO.cpp
+        SquareOsc.cpp
+        Volume.cpp)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this

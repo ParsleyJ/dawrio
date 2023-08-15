@@ -22,7 +22,7 @@ void Voice::render(float *audioData, int32_t numFrames) {
             if (device == nullptr) {
                 continue;
             }
-            device->processState(sampleCounter_, sampleRate_);
+            device->processState(sampleRate_);
         }
 
         audioData[i] = 0.0f;
@@ -31,20 +31,18 @@ void Voice::render(float *audioData, int32_t numFrames) {
             continue;
         }
 
-        size_t getOutputsCount = outDevice->getOutputsCount();
-        if (this->isActive() && getOutputsCount > 0) {
+        size_t outsCount = outDevice->getOutputsCount();
+        if (this->isActive() && outsCount > 0) {
             float outputL = outDevice->emitOutput(0);
             //TODO stereoAudio
 //            float outputR;
-//            if(getOutputsCount < 2){
+//            if(outsCount < 2){
 //                outputR = outputL;
 //            }else{
-//                outputR = outDevice->emitOutput(0);
+//                outputR = outDevice->emitOutput(1);
 //            }
             audioData[i] = (float) (outputL * this->amplitude_);
         }
-
-        this->sampleCounter_++;
     }
 }
 

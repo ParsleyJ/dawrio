@@ -8,7 +8,7 @@
 
 class SinOsc : public Device {
 public:
-    void processState(uintmax_t t, int32_t sampleRate) override;
+    void processState(int32_t sampleRate) override;
     size_t getOutputsCount() override {
         return 2;
     };
@@ -20,6 +20,7 @@ public:
 
 private:
     float outputs_[2];
+    float x_ = 0;
 };
 
 

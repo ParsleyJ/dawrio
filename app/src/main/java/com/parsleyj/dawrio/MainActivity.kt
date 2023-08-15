@@ -30,9 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.ConstEmitter
-import com.parsleyj.dawrio.daw.SawOsc
+import com.parsleyj.dawrio.daw.device.ConstEmitter
+import com.parsleyj.dawrio.daw.device.LFO
+import com.parsleyj.dawrio.daw.device.SawOsc
 import com.parsleyj.dawrio.daw.Voice
+import com.parsleyj.dawrio.daw.device.SinOsc
+import com.parsleyj.dawrio.daw.device.SquareOsc
+import com.parsleyj.dawrio.daw.device.Volume
 import com.parsleyj.dawrio.ui.Knob
 import com.parsleyj.dawrio.ui.theme.DawrioTheme
 
@@ -40,14 +44,41 @@ class MainActivity : ComponentActivity() {
 
     lateinit var constEmitter: ConstEmitter
 
+    /* TODO
+        - Volume
+        - Mixer
+        - Envelope
+        - Manual Gate
+        - Group
+        - Clock
+        - Visual Feedback
+        - Haptic Feedback
+     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val voice = Voice()
-        constEmitter = ConstEmitter(440.0f, "Note:A3")
-        val osc = SawOsc("MySawOsc")
-        val connection = constEmitter.outPort.connectionTo(osc.inFrequency)
-        voice.setLayout(listOf(osc, constEmitter), listOf(connection))
+        constEmitter = ConstEmitter(1.0f, "Lfo Frq")
+        val minConst = ConstEmitter(0f, "Min Vol")
+        val maxConst = ConstEmitter(1f, "Max Vol")
+        val lfoTypeConst = ConstEmitter(2f, "LFO type")
+        val oscFreq = ConstEmitter(220f, "Note:A2")
+        val lfo = LFO("LFO")
+        val osc = SawOsc("MyOsc")
+        val volume = Volume(1.0f, "Volume")
+        val conn0L = osc.outAudioL.connectionTo(volume.inAudioL)
+        val conn0R = osc.outAudioR.connectionTo(volume.inAudioR)
+        val conn1 = constEmitter.outPort.connectionTo(lfo.inFrequency)
+        val conn2 = oscFreq.outPort.connectionTo(osc.inFrequency)
+        val conn3 = minConst.outPort.connectionTo(lfo.inMinimum)
+        val conn4 = maxConst.outPort.connectionTo(lfo.inMaximum)
+        val conn5 = lfoTypeConst.outPort.connectionTo(lfo.inType)
+        val conn6 = lfo.outValue.connectionTo(volume.inAmount)
+        voice.setLayout(
+            listOf(volume, osc, constEmitter, lfoTypeConst, maxConst, minConst, lfo),
+            listOf(conn0L, conn0R, conn1, conn2, conn3, conn4, conn5, conn6)
+        )
 
         setVoice(voice.handle.toAddress)
 
@@ -87,7 +118,7 @@ class MainActivity : ComponentActivity() {
     private fun DeviceCard(padding: Dp) {
         val interactionSource = remember { MutableInteractionSource() }
         val text = remember { mutableStateOf(". Hz") }
-        val maxVal = 440f * 4f
+        val maxVal = 2.0f * 4f
 
         Card(
             modifier = Modifier.fillMaxWidth(),

@@ -15,7 +15,7 @@
 
 class Device {
 public:
-    virtual void processState(uintmax_t t, int32_t sampleRate) = 0;
+    virtual void processState(int32_t sampleRate) = 0;
 
     virtual size_t getOutputsCount() = 0;
 

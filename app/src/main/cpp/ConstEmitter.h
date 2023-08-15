@@ -14,7 +14,7 @@ public:
         emitted_.store(f);
     }
 
-    void processState(uintmax_t t, int32_t sampleRate) override;
+    void processState(int32_t sampleRate) override;
 
     size_t getOutputsCount() override {
         return 1;

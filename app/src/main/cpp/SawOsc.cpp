@@ -3,16 +3,16 @@
 //
 
 #include "SawOsc.h"
+#include "dsp.h"
 
-constexpr auto two_pi = M_PI * 2.0;
-
-void SawOsc::processState(uintmax_t t, int32_t sampleRate) {
-    double time = (double) t / (double) sampleRate;
+void SawOsc::processState(int32_t sampleRate) {
     float frequency = this->readInput(0);
-    auto normalizedT = (float) (time * (double) frequency);
-    auto value = 2.0f * (normalizedT - floor(0.5 + normalizedT));
-
-    this->outputs_[0] = this->outputs_[1] = (float)value;
+    float xInc = 1.0f * frequency / (float) sampleRate;
+    this->x_ += xInc;
+    float discard;
+    this->x_ = std::modf(this->x_, &discard);
+    auto value = 2.0f * this->x_ - 1.0f;
+    this->outputs_[0] = this->outputs_[1] = (float) value;
 }
 
 

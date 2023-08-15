@@ -75,7 +75,6 @@ private:
     std::atomic<bool> isActive_{false};
     std::atomic<double> amplitude_{0.5};
     int32_t sampleRate_ = 0;
-    uintmax_t sampleCounter_ = 0;
 };
 
 

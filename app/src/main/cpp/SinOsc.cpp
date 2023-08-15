@@ -6,16 +6,17 @@
 #include <cmath>
 #include "Device.h"
 #include <jni.h>
+#include "dsp.h"
 
-
-constexpr const double two_pi = M_PI * 2.0;
-
-void SinOsc::processState(uintmax_t t, int32_t sampleRate) {
-    double time = (double) t / (double) sampleRate;
+void SinOsc::processState(int32_t sampleRate) {
     float frequency = this->readInput(0);
-    this->outputs_[0] = this->outputs_[1] = (float) sin(two_pi * frequency * time);
-}
+    float xInc = 1.0f * frequency / (float) sampleRate;
+    this->x_ += xInc;
+    float discard;
+    this->x_ = std::modf(this->x_, &discard);
 
+    this->outputs_[0] = this->outputs_[1] = (float) sin(two_pi * this->x_);
+}
 
 
 float SinOsc::emitOutput(size_t index) {

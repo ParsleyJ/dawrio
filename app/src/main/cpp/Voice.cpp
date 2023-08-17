@@ -104,9 +104,10 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyVoice(JNIEnv *env, jobj
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_setLayout(JNIEnv *env, jobject thiz,
-                                                            jlong address, jlongArray devices,
-                                                            jlongArray routes, jlong outDeviceAddress) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(JNIEnv *env, jobject thiz,
+                                                                     jlong address, jlongArray devices,
+                                                                     jlongArray routes,
+                                                                     jlong outDeviceAddress) {
     auto voice = reinterpret_cast<Voice *>(address);
     auto devicesLength = env->GetArrayLength(devices);
     auto routesLength = env->GetArrayLength(routes);
@@ -115,4 +116,41 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_setLayout(JNIEnv *env, jobject
     auto routesArr = new jlong[routesLength];
     env->GetLongArrayRegion(routes, 0, routesLength, routesArr);
     voice->setLayout(devicesArr, devicesLength, routesArr, routesLength, outDeviceAddress);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getDevicesCount(JNIEnv *env, jobject thiz,
+                                                                  jlong addr) {
+    return (jint) reinterpret_cast<Voice *>(addr)->getDeviceCount();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getDevices(JNIEnv *env, jobject thiz, jlong addr,
+                                                             jlongArray result_array) {
+    auto voice = reinterpret_cast<Voice *>(addr);
+    auto count = voice->getDeviceCount();
+    env->SetLongArrayRegion(result_array, 0, (jsize) count, voice->getDevicesAddressRegion());
+}
+
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutesCount(JNIEnv *env, jobject thiz,
+                                                                 jlong addr) {
+    return (jint) reinterpret_cast<Voice *>(addr)->getRouteCount();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutes(JNIEnv *env, jobject thiz, jlong addr,
+                                                            jlongArray result_array) {
+    auto voice = reinterpret_cast<Voice *>(addr);
+    auto count = voice->getRouteCount();
+    env->SetLongArrayRegion(result_array, 0, (jsize) count, voice->getRoutesAddressRegion());
+}
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutDevice(JNIEnv *env, jobject thiz,
+                                                               jlong addr) {
+    return reinterpret_cast<jlong>(reinterpret_cast<Voice *>(addr)->getOutDevice());
 }

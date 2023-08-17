@@ -50,6 +50,17 @@ public:
         return reinterpret_cast<Device *>(this->devicesAddresses_.load()[index]);
     }
 
+    jlong* getDevicesAddressRegion() {
+        return this->devicesAddresses_.load();
+    }
+
+    jlong* getRoutesAddressRegion() {
+        return reinterpret_cast<jlong*>(this->routes_.load());
+    }
+
+    size_t getRouteCount() {
+        return this->routesLength_.load();
+    }
 
     Device *getOutDevice() {
         return reinterpret_cast<Device *>(this->outDevice_.load());

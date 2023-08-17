@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">dawrio</string>
+    <string name="gate_button">Gate Push Button</string>
 </resources>

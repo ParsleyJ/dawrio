@@ -5,15 +5,28 @@ import com.parsleyj.dawrio.daw.DeviceHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
+import com.parsleyj.dawrio.daw.Voice
 
-class Volume(
-    initalAmount: Float,
+fun Voice.VoiceUpdater.volume(
+    initialAmount: Float,
     label: String,
     description: String = "",
-    handle: DeviceHandle = DeviceHandle(createVolume(initalAmount))
+):Volume = addDevice(Volume(initialAmount, label, description))
+
+class Volume(
+    initialAmount: Float,
+    label: String,
+    description: String = "",
+    handle: DeviceHandle = DeviceHandle(createVolume(initialAmount))
 ) : Device(label, description, handle) {
     override val type: DeviceType
         get() = DeviceType.Effect
+    override val allInputs: List<InPort>
+        get() = listOf(inAudioL, inAudioR, inAmount)
+
+    override val allOutputs: List<OutPort>
+        get() = listOf(outAudioL, outAudioR)
+
 
     val outAudioL: OutPort
         get() = OutPort(this, "audioL", 0)
@@ -31,9 +44,9 @@ class Volume(
         set(value) = setAmount(handle.toAddress, value)
 
 
-    companion object{
-        private external fun getAmount(addr:Long):Float
-        private external fun setAmount(addr:Long, amount:Float)
+    companion object {
+        private external fun getAmount(addr: Long): Float
+        private external fun setAmount(addr: Long, amount: Float)
     }
 
 

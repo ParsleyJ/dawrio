@@ -5,14 +5,27 @@ import com.parsleyj.dawrio.daw.DeviceHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
+import com.parsleyj.dawrio.daw.Voice
 
-class SquareOsc internal constructor(
+fun Voice.VoiceUpdater.squareOsc(
+    label: String,
+    description: String = "",
+):SquareOsc = addDevice(SquareOsc(label, description))
+
+class SquareOsc(
     label: String,
     description: String = "",
     handle: DeviceHandle = DeviceHandle(createSquareOsc()),
 ) : Device(label, description, handle) {
     override val type: DeviceType
         get() = DeviceType.Generator
+
+    override val allInputs: List<InPort>
+        get() = listOf(inFrequency)
+
+    override val allOutputs: List<OutPort>
+        get() = listOf(outAudioL, outAudioR)
+
 
     val outAudioL: OutPort
         get() = OutPort(this, "audioL", 0)

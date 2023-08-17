@@ -1,4 +1,4 @@
-package com.parsleyj.dawrio.ui
+package com.parsleyj.dawrio.ui.composables
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
@@ -41,9 +41,10 @@ fun Knob(
     }
 
 
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val secondaryColor = MaterialTheme.colorScheme.secondary
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
+    val lineColor = MaterialTheme.colorScheme.primary
+    val sweepColor = MaterialTheme.colorScheme.primaryContainer
+    val fineLineColor = MaterialTheme.colorScheme.tertiary
+    val fineSweepColor = MaterialTheme.colorScheme.tertiaryContainer
 
     var lastDragActionTimeInMillis by remember { mutableStateOf(0L) }
     var inFineSettingMode by remember { mutableStateOf(false) }
@@ -94,18 +95,18 @@ fun Knob(
                 val radius = size.minDimension / 2.0f
                 val zero = 90f
                 this.drawArc(
-                    color = if(inFineSettingMode) tertiaryColor else secondaryColor,
+                    color = if(inFineSettingMode) fineSweepColor else sweepColor,
                     startAngle = zero,
                     sweepAngle = -(rotation-angleRange.start),
                     useCenter = true
                 )
                 this.drawCircle(
-                    color = primaryColor,
+                    color = if(inFineSettingMode) fineLineColor else lineColor,
                     style = Stroke(width = strokeWidth),
                     radius = radius,
                 )
                 this.drawLine(
-                    color = primaryColor,
+                    color = if(inFineSettingMode) fineLineColor else lineColor,
                     start = this.center,
                     end = this.center + Offset(0.0f, radius),
                     strokeWidth = strokeWidth

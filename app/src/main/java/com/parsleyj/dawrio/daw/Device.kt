@@ -73,10 +73,14 @@ abstract class Device protected constructor(
 ) {
 
     abstract val type: DeviceType
+    abstract val allInputs:List<InPort>
+    abstract val allOutputs:List<OutPort>
 
     fun destroy() {
         destroy(handle.toAddress)
     }
+
+
 
     companion object {
         external fun readDeviceOutput(deviceAddress: Long, portNumber: Int): Float

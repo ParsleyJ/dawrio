@@ -5,6 +5,12 @@ import com.parsleyj.dawrio.daw.DeviceHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
+import com.parsleyj.dawrio.daw.Voice
+
+fun Voice.VoiceUpdater.lfo(
+    label: String,
+    description: String = "",
+):LFO = addDevice(LFO(label, description))
 
 class LFO(
     label:String,
@@ -14,18 +20,25 @@ class LFO(
     override val type: DeviceType
         get() = DeviceType.Generator
 
+    override val allInputs: List<InPort>
+        get() = listOf(inFrequency, inType, inMinimum, inMaximum)
+
+    override val allOutputs: List<OutPort>
+        get() = listOf(outValue)
+
+
     val outValue: OutPort
-        get() = OutPort(this, "outValue", 0)
+        get() = OutPort(this, "outVal", 0)
 
     val inFrequency: InPort
-        get() = InPort(this, "frequency", 0)
+        get() = InPort(this, "freq", 0)
 
     val inType: InPort
-        get() = InPort(this, "waveType", 1)
+        get() = InPort(this, "wave", 1)
 
     val inMinimum: InPort
-        get() = InPort(this, "minimumValue", 2)
+        get() = InPort(this, "minVal", 2)
 
     val inMaximum: InPort
-        get() = InPort(this, "maximumValue", 3)
+        get() = InPort(this, "maxVal", 3)
 }

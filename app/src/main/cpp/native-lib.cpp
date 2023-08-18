@@ -2,28 +2,20 @@
 #include <string>
 #include "AudioEngine.h"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_parsleyj_dawrio_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
-
 static AudioEngine *audioEngine = new AudioEngine();
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_MainActivity_beepEvent(JNIEnv *env, jobject jthis, jboolean on) {
+Java_com_parsleyj_dawrio_Engine_beepEvent(JNIEnv *env, jobject jthis, jboolean on) {
     audioEngine->setToneOn(on);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_MainActivity_startEngine(JNIEnv *env, jobject jthis) {
+Java_com_parsleyj_dawrio_Engine_startEngine(JNIEnv *env, jobject jthis) {
     audioEngine->start();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_MainActivity_stopEngine(JNIEnv *env, jobject jthis) {
+Java_com_parsleyj_dawrio_Engine_stopEngine(JNIEnv *env, jobject jthis) {
     audioEngine->start();
 }
 
@@ -44,6 +36,6 @@ Java_com_parsleyj_dawrio_daw_Device_00024Companion_readDeviceOutput(JNIEnv *env,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_MainActivity_setVoice(JNIEnv *env, jobject thiz, jlong address) {
+Java_com_parsleyj_dawrio_Engine_setVoice(JNIEnv *env, jobject thiz, jlong address) {
     audioEngine->setVoice(reinterpret_cast<Voice *>(address));
 }

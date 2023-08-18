@@ -9,7 +9,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.LifecycleOwner
-import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.VoiceHandle
 import kotlinx.coroutines.CoroutineScope
 

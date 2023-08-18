@@ -5,6 +5,7 @@ import com.parsleyj.dawrio.daw.DeviceHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
+import com.parsleyj.dawrio.daw.ValueFormat
 import com.parsleyj.dawrio.daw.Voice
 
 fun Voice.VoiceUpdater.lfo(
@@ -31,7 +32,7 @@ class LFO(
         get() = OutPort(this, "outVal", 0)
 
     val inFrequency: InPort
-        get() = InPort(this, "freq", 0)
+        get() = InPort(this, "freq", 0, ValueFormat.Frequency)
 
     val inType: InPort
         get() = InPort(this, "wave", 1)

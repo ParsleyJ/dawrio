@@ -5,6 +5,7 @@ import com.parsleyj.dawrio.daw.DeviceHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
+import com.parsleyj.dawrio.daw.ValueFormat
 import com.parsleyj.dawrio.daw.Voice
 
 fun Voice.VoiceUpdater.squareOsc(
@@ -32,5 +33,5 @@ class SquareOsc(
     val outAudioR: OutPort
         get() = OutPort(this, "audioR", 1)
     val inFrequency: InPort
-        get() = InPort(this, "frequency", 0)
+        get() = InPort(this, "frequency", 0, ValueFormat.Frequency)
 }

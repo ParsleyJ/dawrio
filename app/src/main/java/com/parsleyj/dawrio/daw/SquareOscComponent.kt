@@ -8,38 +8,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.device.ConstEmitter
-import com.parsleyj.dawrio.daw.device.SawOsc
 import com.parsleyj.dawrio.daw.device.SquareOsc
-import com.parsleyj.dawrio.ui.composables.DeviceCard
 import com.parsleyj.dawrio.util.NameGenerator
 
 class SquareOscComponent(
-    val voice: Voice,
     label: String = NameGenerator.newName("SquareOSC"),
     description: String = "",
-    padding: Dp = 8.dp,
 ) : Component {
-    override val gui: @Composable () -> Unit = {
-        DeviceCard(
-            voice = voice,
-            device = this@SquareOscComponent.device,
+    override val device: Device = SquareOsc(label, description)
+
+    @Composable
+    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(padding),
-                ) {
-                    Text("Square OSC")
-                }
+                Text("Square OSC")
             }
         }
 
     }
-    override val device: SquareOsc = SquareOsc(label, description)
 }

@@ -3,7 +3,7 @@
 
 Voice::Voice() = default;
 
-Voice::~Voice() = default;
+Voice::~Voice() = default; //TODO delete devices and routes
 
 void Voice::start() {
     this->isActive_.store(true);

@@ -2,13 +2,11 @@ package com.parsleyj.dawrio.ui.editvoice
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import com.parsleyj.dawrio.data.MemoryDataSource
 import com.parsleyj.dawrio.data.MemoryProjectRepository
 import com.parsleyj.dawrio.daw.Voice

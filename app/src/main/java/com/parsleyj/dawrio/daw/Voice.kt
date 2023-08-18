@@ -1,5 +1,6 @@
 package com.parsleyj.dawrio.daw
 
+import android.util.Log
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -32,10 +33,9 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     }
 
     private fun setRouteWithoutUpdating(route: Route) {
-        val found = this.routes.find { it.inDevice == route.inDevice && it.inPort == route.inPort }
-        if (found != null) {
-            this.routesPrivate.remove(found.handle)
-        }
+        val routesForSameInput = this.routes.filter { it.inPort == route.inPort }
+        routesForSameInput.map { it.handle }.forEach { this.routesPrivate.remove(it) }
+        //TODO: destroy prev when commit
         this.routesPrivate[route.handle] = route
     }
 
@@ -74,9 +74,8 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     }
 
 
-
     interface VoiceUpdater {
-        val voice:Voice
+        val voice: Voice
         fun InPort.connect(outPort: OutPort): Route
         fun OutPort.connect(inPort: InPort): Route
         fun <T : Device> addDevice(device: T): T
@@ -107,6 +106,8 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
                 setDeviceWithoutUpdating(device)
                 return device
             }
+
+
         }
         block(builder)
         commitNativeLayout()
@@ -124,16 +125,16 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     }
 
     fun updateRoute(source: OutPort?, input: InPort) {
+        Log.d("VoiceKt", "updateRoute: $source -> $input")
         if (source == null) {
-            val toBeRemoved = ArrayList<RouteHandle>(routesPrivate.size)
-            routes.filter {
-                it.inDevice == input.device.handle && it.inPort == input.portNumber
-            }.map {
-                it.handle
-            }.forEach(toBeRemoved::add)
-            toBeRemoved.forEach(routesPrivate::remove)
+            input.findRoute(routes)?.let {
+                routesPrivate.remove(it.handle) ?.let { itRoute->
+                    Log.d("VoiceKt", "updateRoute: removed - $itRoute")
+                }
+            }
         } else {
-            setRouteWithoutUpdating(source.connectionTo(input))
+            val newRoute = source.connectionTo(input)
+            setRouteWithoutUpdating(newRoute)
         }
         commitNativeLayout()
     }

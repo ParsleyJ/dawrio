@@ -1,6 +1,5 @@
 package com.parsleyj.dawrio.ui.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.parsleyj.dawrio.daw.ValueFormat
 
 @Composable
 fun KnobWithLabel(
@@ -23,14 +23,11 @@ fun KnobWithLabel(
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     initialValue: Float = valueRange.start,
     padding: Dp = 8.dp,
-    size: Dp = 64.dp
+    size: Dp = 64.dp,
+    format: (f:Float)->String = ValueFormat.Decimal(1).convertToString
 ) {
-    fun format(f:Float): String {
-        return String.format("%.1f Hz", f)
-    }
-
     var value by remember { mutableStateOf(initialValue) }
-    var text by remember { mutableStateOf(format(value)) }
+    var text by remember(value, format) { mutableStateOf(format(value)) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

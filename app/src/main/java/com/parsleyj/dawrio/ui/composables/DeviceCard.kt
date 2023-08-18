@@ -3,6 +3,7 @@ package com.parsleyj.dawrio.ui.composables
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,6 +33,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -51,18 +53,22 @@ import androidx.compose.ui.window.Dialog
 import com.parsleyj.dawrio.daw.Device
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
-import com.parsleyj.dawrio.daw.Voice
+import com.parsleyj.dawrio.daw.Route
+
 
 @Composable
 fun DeviceCard(
-    voice: Voice,
     device: Device,
+    allDevices: List<Device>,
+    allRoutes: List<Route>,
     imageVector: ImageVector = Icons.Outlined.Warning,
-    inContent: @Composable ColumnScope.() -> Unit
+    onSetRoute: (input: InPort, it: OutPort?)->Unit,
+    innerContent: @Composable ColumnScope.() -> Unit
 ) {
     val headerHeight = 64.dp
     val inputsHeight = 64.dp
-    val outputsHeight = 32.dp
+    val outputsHeight = 40.dp
+
     val inputs = device.allInputs
     val outputs = device.allOutputs
     val deviceName = device.label
@@ -70,19 +76,19 @@ fun DeviceCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
-        )
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         DeviceCardHeader(headerHeight, imageVector, deviceName)
-        if (inputs.isEmpty().not()) {
-            DeviceCardInputSection(inputsHeight, device, voice)
+        if (inputs.isNotEmpty()) {
+            DeviceCardInputSection(device, allDevices, allRoutes, inputsHeight, onSetRoute)
             Divider(color = MaterialTheme.colorScheme.outline)
         }
-        inContent()
-        if (outputs.isEmpty().not()) {
+
+        innerContent()
+
+        if (outputs.isNotEmpty()) {
             Divider(color = MaterialTheme.colorScheme.outline)
-            DeviceCardOutputSection(outputsHeight, outputs)
+            DeviceCardOutputSection(device, allRoutes, outputsHeight)
         }
     }
 
@@ -137,11 +143,14 @@ private fun DeviceCardHeader(
 
 @Composable
 private fun DeviceCardInputSection(
-    inputsHeight: Dp,
     device: Device,
-    voice: Voice,
+    allDevices: List<Device>,
+    allRoutes: List<Route>,
+    inputsHeight: Dp,
+    onSetRoute: (input: InPort, it: OutPort?)->Unit,
 ) {
 
+    val otherDevices = allDevices.filter { it.handle != device.handle }
     val inputs = device.allInputs
     Box(
         modifier = Modifier
@@ -150,61 +159,58 @@ private fun DeviceCardInputSection(
     ) {
         Row(
             modifier = Modifier.fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically,
+
+            ) {
             Spacer(modifier = Modifier.width(10.dp))
             Text(text = "IN")
             Spacer(modifier = Modifier.width(20.dp))
+            val scrollState = rememberScrollState()
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.Center
             ) {
                 for ((index, input) in inputs.withIndex()) {
                     var showDialog by remember { mutableStateOf(false) }
-                    val routeIn = voice.routes.filter {
-                        it.inDevice == device.handle && it.inPort == input.portNumber
-                    }.map {
-                        voice.devices.find { d -> d.handle == it.outDevice }
-                            ?.allOutputs?.getOrNull(it.outPort)
-                    }.firstOrNull()
-                    val hasRouteIn = routeIn!=null
+                    val routeIn = input.findRoute(allRoutes)
+                    val hasRouteIn = routeIn != null
                     if (showDialog) {
                         SelectSourceDialog(
+                            devices = otherDevices,
                             inPort = input,
-                            defaultSelected = routeIn,
-                            allDevices = voice.devices,
+                            selected = routeIn?.outPort,
+                            onSelectSource = { onSetRoute(input, it) },
                             onDismiss = { showDialog = false },
-                            onSourceSelect = { source ->
-                                voice.updateRoute(source, input)
-                            }
                         )
                     }
 
                     Button(
-                        colors=ButtonDefaults.buttonColors(
-                            containerColor=if(hasRouteIn) {
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (hasRouteIn) {
                                 MaterialTheme.colorScheme.secondaryContainer
-                            }else{
+                            } else {
                                 MaterialTheme.colorScheme.primaryContainer
                             }
                         ),
                         onClick = {
                             showDialog = true
                         },
-                        border= BorderStroke(
-                            width=2.dp,
-                            color=if(hasRouteIn) {
+                        border = BorderStroke(
+                            width = 2.dp,
+                            color = if (hasRouteIn) {
                                 MaterialTheme.colorScheme.secondary
-                            }else{
+                            } else {
                                 MaterialTheme.colorScheme.primary
                             }
                         )
                     ) {
                         Text(
                             text = input.portName,
-                            color=if(hasRouteIn){
+                            color = if (hasRouteIn) {
                                 MaterialTheme.colorScheme.onSecondaryContainer
-                            }else{
+                            } else {
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             }
                         )
@@ -218,8 +224,15 @@ private fun DeviceCardInputSection(
     }
 }
 
+
+
 @Composable
-private fun DeviceCardOutputSection(outputsHeight: Dp, outputs: List<OutPort>) {
+private fun DeviceCardOutputSection(
+    device: Device,
+    allRoutes: List<Route>,
+    outputsHeight: Dp,
+) {
+    val outputs = device.allOutputs
     Box(
         modifier = Modifier
             .height(outputsHeight)
@@ -236,15 +249,23 @@ private fun DeviceCardOutputSection(outputsHeight: Dp, outputs: List<OutPort>) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                for((index, output) in outputs.withIndex()){
-                    Text(text=output.portName,
-                        modifier=Modifier
+                for ((index, output) in outputs.withIndex()) {
+                    val hasRoutesOut = output.findRoutes(allRoutes).isNotEmpty()
+                    Text(
+                        text = output.portName,
+                        modifier = Modifier
                             .border(
                                 border = BorderStroke(
-                                    width = 1.dp, MaterialTheme.colorScheme.outline,
+                                    width = 1.dp,
+                                    color = if (hasRoutesOut) {
+                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    },
                                 ),
-                                shape= CircleShape
-                            ).padding(4.dp, 1.dp),
+                                shape = CircleShape
+                            )
+                            .padding(4.dp, 1.dp),
                     )
                     if (index < outputs.size - 1) {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -258,23 +279,34 @@ private fun DeviceCardOutputSection(outputsHeight: Dp, outputs: List<OutPort>) {
 
 @Composable
 fun SelectSourceDialog(
+    devices: List<Device>,
     inPort: InPort,
-    defaultSelected: OutPort?,
-    allDevices: List<Device>,
+    selected: OutPort?,
+    onSelectSource: (OutPort?) -> Unit,
     onDismiss: () -> Unit,
-    onSourceSelect: (OutPort?) -> Unit
 ) {
-    var selectedOption by remember { mutableStateOf(defaultSelected) }
+
+    val otherDevices = devices.filter { it.handle != inPort.device.handle }
+
+    var selectedOption by remember { mutableStateOf(selected) }
     Dialog(
         onDismissRequest = onDismiss,
 
-    ) {
+        ) {
         Surface(
             modifier = Modifier.width(300.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
             Column(modifier = Modifier.padding(10.dp)) {
-                Text(text = "Source for ${inPort.device.label}/${inPort.portName}")
+                Text(
+                    text = "Select source",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "for ${inPort.device.label}/${inPort.portName}",
+                    style = MaterialTheme.typography.labelMedium
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn(modifier = Modifier.height(500.dp)) {
                     item {
@@ -289,30 +321,36 @@ fun SelectSourceDialog(
                         }
                     }
                     itemsIndexed(
-                        allDevices.filter { it != inPort.device }.flatMap { it.allOutputs }
+                        otherDevices.flatMap { it.allOutputs }
                     ) { _, outPort ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
                                 selected = selectedOption == outPort,
-                                onClick = { selectedOption = outPort }
+                                onClick = {
+                                    selectedOption = outPort
+                                }
                             )
-                            Text(text = "${outPort.device.label}/${outPort.portName}")
+                            Text(text = "$outPort", modifier = Modifier.padding(start = 10.dp))
                         }
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Row(horizontalArrangement = Arrangement.End) {
-                    Button(onClick = {
-                        onDismiss()
-                    }) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = {
+                            onDismiss()
+                        }) {
                         Text(text = "Cancel")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        onSourceSelect(selectedOption)
+                        onSelectSource(selectedOption)
                         onDismiss()
                     }) {
                         Text(text = "Select")

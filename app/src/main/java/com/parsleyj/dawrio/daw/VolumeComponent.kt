@@ -8,37 +8,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.device.ConstEmitter
 import com.parsleyj.dawrio.daw.device.Volume
-import com.parsleyj.dawrio.ui.composables.DeviceCard
 import com.parsleyj.dawrio.util.NameGenerator
 
 class VolumeComponent(
-    val voice: Voice,
     label: String = NameGenerator.newName("Volume"),
     description: String = "",
-    padding: Dp = 8.dp,
 ) : Component {
-    override val gui: @Composable () -> Unit = {
-        DeviceCard(
-            voice = voice,
-            device = this@VolumeComponent.device,
+    override val device: Device = Volume(1.0f, label, description)
+
+    @Composable
+    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(padding),
-                ) {
-                    Text("Volume")
-                }
+                Text("Volume")
             }
         }
 
     }
-    override val device: Volume = Volume(1.0f, label, description)
 }

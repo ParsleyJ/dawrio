@@ -33,7 +33,6 @@ public:
     }
 
 private:
-    float inputs_[2];
     float amount_ = 1.0;
     float outputs_[2];
 

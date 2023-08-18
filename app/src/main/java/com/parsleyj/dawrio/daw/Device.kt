@@ -8,50 +8,122 @@ fun Long.toDevice(): DeviceHandle {
     return DeviceHandle(this)
 }
 
+fun Float.scaleIn(range: ClosedFloatingPointRange<Float>): Float {
+    val rangeExtent = range.endInclusive - range.start
+    return (this - range.start) / rangeExtent
+}
 
-class OutPort(val device: Device, val portName: String, val portNumber: Int) {
+sealed class ValueFormat(val convertToString: (v: Float) -> String) {
+    class Percent(min: Float, max: Float) : ValueFormat({
+        String.format("%.1f%", it.scaleIn(min..max))
+    })
+
+    object Frequency : ValueFormat({ String.format("%.1f Hz", it) })
+
+    class Decimal(val decimals: Int) : ValueFormat({ String.format("%.${decimals}f", it) })
+
+    //TODO enum
+}
+
+
+
+class OutPort(
+    val device: Device,
+    val portName: String,
+    val portNumber: Int,
+) {
     fun getValue(): Float {
         return Device.readDeviceOutput(device.handle.toAddress, portNumber)
     }
 
     fun connectionTo(inPort: InPort): Route {
-        return Route(
-            this.device.handle,
-            this.portNumber,
-            inPort.device.handle,
-            inPort.portNumber
-        )
+        return Route(this, inPort)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is OutPort) return false
+
+        if (portNumber != other.portNumber) return false
+        if (device.handle.toAddress != other.device.handle.toAddress) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = portNumber
+        result = 31 * result + device.handle.toAddress.hashCode()
+        return result
+    }
+
+    override fun toString() = "${this.device.label}/${this.portName}"
+    fun findRoutes(allRoutes: List<Route>): List<Route> = allRoutes.filter { this == it.outPort }
+
+
 }
 
-class InPort(val device: Device, val portName: String, val portNumber: Int) {
+class InPort(
+    val device: Device,
+    val portName: String,
+    val portNumber: Int,
+    val streamFormat: ValueFormat = ValueFormat.Decimal(1)
+) {
     fun connectionTo(outPort: OutPort): Route {
-        return Route(
-            outPort.device.handle,
-            outPort.portNumber,
-            this.device.handle,
-            this.portNumber,
-        )
+        return Route(outPort, this)
     }
+
+    fun findRoute(routes: List<Route>): Route? = routes.find { this == it.inPort }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is InPort) return false
+
+        if (portNumber != other.portNumber) return false
+        if (device.handle.toAddress != other.device.handle.toAddress) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = portNumber
+        result = 31 * result + device.handle.toAddress.hashCode()
+        return result
+    }
+
+    override fun toString() = "${this.device.label}/${this.portName}"
 }
 
 @JvmInline
 value class RouteHandle(val toAddress: Long)
 
 class Route(
-    val outDevice: DeviceHandle,
-    val outPort: Int,
-    val inDevice: DeviceHandle,
-    val inPort: Int,
+    val outPort: OutPort,
+    val inPort: InPort,
     val handle: RouteHandle = RouteHandle(
         createRoute(
-            outDevice.toAddress,
-            outPort,
-            inDevice.toAddress,
-            inPort
+            outPort.device.handle.toAddress,
+            outPort.portNumber,
+            inPort.device.handle.toAddress,
+            inPort.portNumber
         )
     )
 ) {
+
+    val inDevice: Device get() = inPort.device
+    val outDevice: Device get() = outPort.device
+    val inDeviceHandle: DeviceHandle get() = inDevice.handle
+    val outDeviceHandle: DeviceHandle get() = outDevice.handle
+    val inDeviceAddress: Long = inDeviceHandle.toAddress
+    val outDeviceAddress: Long = outDeviceHandle.toAddress
+    val inPortNumber: Int = inPort.portNumber
+    val outPortNumber: Int = outPort.portNumber
+
+
+    override fun toString() = "$outPort -> $inPort"
+    fun destroy() {
+        //TODO destroy
+    }
+
     companion object {
         private external fun createRoute(
             outDevice: Long,
@@ -73,13 +145,12 @@ abstract class Device protected constructor(
 ) {
 
     abstract val type: DeviceType
-    abstract val allInputs:List<InPort>
-    abstract val allOutputs:List<OutPort>
+    abstract val allInputs: List<InPort>
+    abstract val allOutputs: List<OutPort>
 
     fun destroy() {
         destroy(handle.toAddress)
     }
-
 
 
     companion object {

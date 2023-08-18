@@ -1,12 +1,12 @@
 package com.parsleyj.dawrio
 
 import androidx.lifecycle.ViewModel
-import com.parsleyj.dawrio.daw.Component
-import com.parsleyj.dawrio.daw.Element
-import com.parsleyj.dawrio.daw.ElementHandle
-import com.parsleyj.dawrio.daw.InPort
-import com.parsleyj.dawrio.daw.OutPort
-import com.parsleyj.dawrio.daw.Route
+import com.parsleyj.dawrio.daw.components.Component
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.element.ElementHandle
+import com.parsleyj.dawrio.daw.elementroute.ElementInPort
+import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
+import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.daw.Voice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +22,8 @@ class VoiceViewModel : ViewModel() {
     val voice: Voice = privatePair.first
 
 
-    private val _devices = MutableStateFlow(listOf<Element>())
-    val devices: StateFlow<List<Element>> = _devices.asStateFlow()
+    private val _elements = MutableStateFlow(listOf<Element>())
+    val elements: StateFlow<List<Element>> = _elements.asStateFlow()
 
     private val _routes = MutableStateFlow(listOf<Route>())
     val routes: StateFlow<List<Route>> = _routes.asStateFlow()
@@ -35,7 +35,7 @@ class VoiceViewModel : ViewModel() {
     val components: StateFlow<List<Component>> = _components
 
     init {
-        _devices.update {
+        _elements.update {
             voice.elements
         }
         _routes.update {
@@ -54,15 +54,15 @@ class VoiceViewModel : ViewModel() {
         }
     }
 
-    fun pushRouteChange(input: InPort, output: OutPort?) {
+    fun pushRouteChange(input: ElementInPort, output: ElementOutPort?) {
         _routes.update {
             voice.updateRoute(output, input)
             voice.routes
         }
     }
 
-    inline fun <reified T:Element> getDevice(handle: ElementHandle): Flow<T?> {
-        return devices.transform { list ->
+    inline fun <reified T: Element> getElement(handle: ElementHandle): Flow<T?> {
+        return elements.transform { list ->
             (list.find { it.handle == handle } as? T)?.let { emit(it) } ?: emit(null)
         }
     }

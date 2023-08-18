@@ -3,7 +3,26 @@
 
 Voice::Voice() = default;
 
-Voice::~Voice() = default; //TODO delete devices and routes
+Voice::~Voice(){
+    //Resets all routes
+    setLayout(
+        this->getDevicesAddressRegion(),
+        this->getElementCount(),
+        this->getRoutesAddressRegion(),
+        0,
+        this->outElement_
+    );
+
+    size_t routeCount = this->getElementCount();
+    for(size_t i = 0; i < routeCount; i++){
+        delete this->routes_.load()[i];
+    }
+
+    size_t deviceCount = this->getElementCount();
+    for(size_t i = 0; i < deviceCount; i++){
+        delete this->getElement(i);
+    }
+}
 
 void Voice::start() {
     this->isActive_.store(true);
@@ -14,34 +33,37 @@ void Voice::stop() {
 }
 
 void Voice::render(float *audioData, int32_t numFrames) {
-    size_t devCount = this->getDeviceCount();
+    size_t devCount = this->getElementCount();
 
     for (int i = 0; i < numFrames; i++) {
-        for (int d_i = 0; d_i < devCount; ++d_i) {
-            Element *device = getDevice(d_i);
-            if (device == nullptr) {
+        audioData[i] = 0.0f;
+        if (this->isActive()) {
+            for (int d_i = 0; d_i < devCount; ++d_i) {
+                Element *device = getElement(d_i);
+                if (device == nullptr) {
+                    continue;
+                }
+                device->processState(sampleRate_);
+            }
+
+
+            Element *outDevice = this->getOutDevice();
+            if (outDevice == nullptr) {
                 continue;
             }
-            device->processState(sampleRate_);
-        }
 
-        audioData[i] = 0.0f;
-        Element *outDevice = this->getOutDevice();
-        if (outDevice == nullptr) {
-            continue;
-        }
-
-        size_t outsCount = outDevice->getOutputsCount();
-        if (this->isActive() && outsCount > 0) {
-            float outputL = outDevice->emitOutput(0);
-            //TODO stereoAudio
+            size_t outsCount = outDevice->getOutputsCount();
+            if (this->isActive() && outsCount > 0) {
+                float outputL = outDevice->emitOutput(0);
+                //TODO stereoAudio
 //            float outputR;
 //            if(outsCount < 2){
 //                outputR = outputL;
 //            }else{
 //                outputR = outDevice->emitOutput(1);
 //            }
-            audioData[i] = (float) (outputL * this->amplitude_);
+                audioData[i] = (float) (outputL * this->amplitude_);
+            }
         }
     }
 }
@@ -53,15 +75,15 @@ void Voice::setLayout(
     size_t routesLength,
     jlong outDevice
 ) {
-    delete[] (this->devicesAddresses_.load());
+    delete[] (this->elementsAddresses_.load());
     delete[] (this->routes_.load());
 
-    this->devicesAddresses_.store(devices);
-    this->devicesAddressesLength_.store(devicesLength);
+    this->elementsAddresses_.store(devices);
+    this->elementsAddressesLength_.store(devicesLength);
     auto **routesCasted = reinterpret_cast<Route **>(routes);
     this->routes_.store(routesCasted);
     this->routesLength_.store(routesLength);
-    this->outDevice_.store(outDevice);
+    this->outElement_.store(outDevice);
 
     for (int i = 0; i < devicesLength; i++) {
         auto d = reinterpret_cast<Element *>(devices[i]);
@@ -105,7 +127,8 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyVoice(JNIEnv *env, jobj
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(JNIEnv *env, jobject thiz,
-                                                                     jlong address, jlongArray devices,
+                                                                     jlong address,
+                                                                     jlongArray devices,
                                                                      jlongArray routes,
                                                                      jlong outDeviceAddress) {
     auto voice = reinterpret_cast<Voice *>(address);
@@ -120,16 +143,16 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(JNIEnv *env
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getDevicesCount(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElementCount(JNIEnv *env, jobject thiz,
                                                                   jlong addr) {
-    return (jint) reinterpret_cast<Voice *>(addr)->getDeviceCount();
+    return (jint) reinterpret_cast<Voice *>(addr)->getElementCount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getDevices(JNIEnv *env, jobject thiz, jlong addr,
-                                                             jlongArray result_array) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElements(JNIEnv *env, jobject thiz, jlong addr,
+                                                              jlongArray result_array) {
     auto voice = reinterpret_cast<Voice *>(addr);
-    auto count = voice->getDeviceCount();
+    auto count = voice->getElementCount();
     env->SetLongArrayRegion(result_array, 0, (jsize) count, voice->getDevicesAddressRegion());
 }
 
@@ -150,7 +173,7 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutes(JNIEnv *env, jobject
 }
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutDevice(JNIEnv *env, jobject thiz,
-                                                               jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutElement(JNIEnv *env, jobject thiz,
+                                                                jlong addr) {
     return reinterpret_cast<jlong>(reinterpret_cast<Voice *>(addr)->getOutDevice());
 }

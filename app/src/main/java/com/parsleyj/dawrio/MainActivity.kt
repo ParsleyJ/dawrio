@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 
         val playing by viewModel.playing.collectAsStateWithLifecycle()
         val components by viewModel.components.collectAsStateWithLifecycle()
-        val devices by viewModel.devices.collectAsStateWithLifecycle()
+        val elements by viewModel.elements.collectAsStateWithLifecycle()
         val routes by viewModel.routes.collectAsStateWithLifecycle()
 
         Surface(
@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.verticalScroll(scrollState)
                     ) {
                         for (comp in components) {
-                            comp.ComponentGUI(devices, routes, viewModel::pushRouteChange)
+                            comp.ComponentGUI(elements, routes, viewModel::pushRouteChange)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }

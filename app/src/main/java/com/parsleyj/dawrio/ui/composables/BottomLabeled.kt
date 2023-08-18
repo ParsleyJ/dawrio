@@ -18,16 +18,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BottomLabeled(
    label:String,
-   padding: Dp = 8.dp, //TODO move to modifier
    content: @Composable () -> Unit
 ) {
     val text = remember { mutableStateOf(label) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(padding)
+        modifier = Modifier.padding(8.dp)
     ){
         content()
-        Spacer(Modifier.size(padding))
+        Spacer(Modifier.size(8.dp))
         val textInLabel by text
         Text(
             text = textInLabel,

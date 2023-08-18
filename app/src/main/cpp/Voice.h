@@ -42,16 +42,16 @@ public:
         return this->isActive_.load();
     }
 
-    size_t getDeviceCount() {
-        return this->devicesAddressesLength_.load();
+    size_t getElementCount() {
+        return this->elementsAddressesLength_.load();
     }
 
-    Element *getDevice(size_t index) {
-        return reinterpret_cast<Element *>(this->devicesAddresses_.load()[index]);
+    Element *getElement(size_t index) {
+        return reinterpret_cast<Element *>(this->elementsAddresses_.load()[index]);
     }
 
     jlong* getDevicesAddressRegion() {
-        return this->devicesAddresses_.load();
+        return this->elementsAddresses_.load();
     }
 
     jlong* getRoutesAddressRegion() {
@@ -63,7 +63,7 @@ public:
     }
 
     Element *getOutDevice() {
-        return reinterpret_cast<Element *>(this->outDevice_.load());
+        return reinterpret_cast<Element *>(this->outElement_.load());
     }
 
 
@@ -80,9 +80,9 @@ public:
 private:
     std::atomic<Route **> routes_{nullptr};
     std::atomic<size_t> routesLength_{0};
-    std::atomic<jlong *> devicesAddresses_{nullptr};
-    std::atomic<size_t> devicesAddressesLength_{0};
-    std::atomic<jlong> outDevice_ = 0;
+    std::atomic<jlong *> elementsAddresses_{nullptr};
+    std::atomic<size_t> elementsAddressesLength_{0};
+    std::atomic<jlong> outElement_ = 0;
     std::atomic<bool> isActive_{false};
     std::atomic<double> amplitude_{0.5};
     int32_t sampleRate_ = 0;

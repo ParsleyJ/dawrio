@@ -1,4 +1,4 @@
-package com.parsleyj.dawrio.daw
+package com.parsleyj.dawrio.daw.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -15,7 +15,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.parsleyj.dawrio.R
-import com.parsleyj.dawrio.daw.elements.ConstEmitter
+import com.parsleyj.dawrio.daw.element.ConstEmitter
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.ui.composables.BottomLabeled
 import com.parsleyj.dawrio.ui.composables.PushGateButton
 import com.parsleyj.dawrio.util.NameGenerator

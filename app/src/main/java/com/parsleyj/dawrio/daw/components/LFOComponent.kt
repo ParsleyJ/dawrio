@@ -1,4 +1,4 @@
-package com.parsleyj.dawrio.daw
+package com.parsleyj.dawrio.daw.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.elements.LFO
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.element.LFO
+import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.ui.composables.Meter
 import com.parsleyj.dawrio.ui.composables.refreshingState
 import com.parsleyj.dawrio.util.NameGenerator
@@ -53,8 +53,9 @@ class LFOComponent(
                 Meter(
                     value = outValue.value,
                     range = outValue.range,
+                    showText = true,
                     modifier = Modifier
-                        .size(96.dp, 32.dp)
+                        .size(96.dp, 40.dp)
                         .padding(8.dp)
                 )
             }

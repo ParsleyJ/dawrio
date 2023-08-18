@@ -1,26 +1,24 @@
-package com.parsleyj.dawrio.daw
+package com.parsleyj.dawrio.daw.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.elements.SquareOsc
-import com.parsleyj.dawrio.ui.composables.Meter
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.elementroute.Route
+import com.parsleyj.dawrio.daw.element.Volume
 import com.parsleyj.dawrio.util.NameGenerator
 
-class SquareOscComponent(
-    label: String = NameGenerator.newName("SquareOSC"),
+class VolumeComponent(
+    label: String = NameGenerator.newName("Volume"),
     description: String = "",
 ) : Component {
-    override val element: Element = SquareOsc(label, description)
+    override val element: Element = Volume(1.0f, label, description)
 
     @Composable
     override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
@@ -32,7 +30,7 @@ class SquareOscComponent(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(8.dp),
             ) {
-                Text("Square OSC")
+                Text("Volume")
             }
         }
 

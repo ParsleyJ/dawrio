@@ -13,9 +13,9 @@
 class LFO :
     public Element {
 
-    static const int lfoTypes = 3;
+    static const int lfoTypes = 4;
     enum LFOType {
-        Sin, Saw, SawDesc, Square
+        Sin, SawUp, SawDown, Square
     };
 
 

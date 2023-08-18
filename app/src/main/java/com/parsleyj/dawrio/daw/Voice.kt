@@ -1,6 +1,12 @@
 package com.parsleyj.dawrio.daw
 
 import android.util.Log
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.element.ElementHandle
+import com.parsleyj.dawrio.daw.elementroute.ElementInPort
+import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
+import com.parsleyj.dawrio.daw.elementroute.Route
+import com.parsleyj.dawrio.daw.elementroute.RouteHandle
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -11,9 +17,9 @@ value class VoiceHandle(val toAddress: Long)
 class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
 
-    private val devicesPrivate: MutableMap<ElementHandle, Element> = mutableMapOf()
+    private val elementsPrivate: MutableMap<ElementHandle, Element> = mutableMapOf()
     val elements: List<Element>
-        get() = devicesPrivate.values.toList()
+        get() = elementsPrivate.values.toList()
 
 
     private val routesPrivate: MutableMap<RouteHandle, Route> = mutableMapOf()
@@ -39,12 +45,12 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         this.routesPrivate[route.handle] = route
     }
 
-    private fun setDeviceWithoutUpdating(element: Element) {
-        this.devicesPrivate[element.handle] = element
+    private fun setElementWithoutUpdating(element: Element) {
+        this.elementsPrivate[element.handle] = element
     }
 
-    fun addDevice(dev: Element) {
-        setDeviceWithoutUpdating(dev)
+    fun addElement(dev: Element) {
+        setElementWithoutUpdating(dev)
         commitNativeLayout()
     }
 
@@ -53,13 +59,13 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         commitNativeLayout()
     }
 
-    fun removeDevice(dev: Element) {
-        removeDevice(dev.handle)
+    fun removeElement(el: Element) {
+        removeElement(el.handle)
         commitNativeLayout()
     }
 
-    fun removeDevice(handle: ElementHandle) {
-        this.devicesPrivate.remove(handle)
+    fun removeElement(handle: ElementHandle) {
+        this.elementsPrivate.remove(handle)
         commitNativeLayout()
     }
 
@@ -76,9 +82,9 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
     interface VoiceUpdater {
         val voice: Voice
-        fun InPort.connect(outPort: OutPort): Route
-        fun OutPort.connect(inPort: InPort): Route
-        fun <T : Element> addDevice(device: T): T
+        fun ElementInPort.connect(outPort: ElementOutPort): Route
+        fun ElementOutPort.connect(inPort: ElementInPort): Route
+        fun <T : Element> addElement(element: T): T
     }
 
 
@@ -90,21 +96,21 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
             override val voice: Voice
                 get() = this@Voice
 
-            override fun InPort.connect(outPort: OutPort): Route {
+            override fun ElementInPort.connect(outPort: ElementOutPort): Route {
                 val result = this.connectionTo(outPort)
                 setRouteWithoutUpdating(result)
                 return result
             }
 
-            override fun OutPort.connect(inPort: InPort): Route {
+            override fun ElementOutPort.connect(inPort: ElementInPort): Route {
                 val result = this.connectionTo(inPort)
                 setRouteWithoutUpdating(result)
                 return result
             }
 
-            override fun <T : Element> addDevice(device: T): T {
-                setDeviceWithoutUpdating(device)
-                return device
+            override fun <T : Element> addElement(element: T): T {
+                setElementWithoutUpdating(element)
+                return element
             }
 
 
@@ -124,7 +130,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         )
     }
 
-    fun updateRoute(source: OutPort?, input: InPort) {
+    fun updateRoute(source: ElementOutPort?, input: ElementInPort) {
         Log.d("VoiceKt", "updateRoute: $source -> $input")
         if (source == null) {
             input.findRoute(routes)?.let {
@@ -144,16 +150,16 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         private external fun startVoice(address: Long)
         private external fun stopVoice(address: Long)
         private external fun destroyVoice(address: Long)
-        private external fun getDevicesCount(addr: Long): Int
-        private external fun getDevices(addr: Long, resultArray: LongArray)
+        private external fun getElementCount(addr: Long): Int
+        private external fun getElements(addr: Long, resultArray: LongArray)
         private external fun getRoutesCount(addr: Long): Int
         private external fun getRoutes(addr: Long, resultArray: LongArray)
-        private external fun getOutDevice(addr: Long): Long
+        private external fun getOutElement(addr: Long): Long
         private external fun updateNativeLayout(
             address: Long,
-            devices: LongArray,
+            elements: LongArray,
             routes: LongArray,
-            outDevice: Long
+            outElement: Long
         )
     }
 }

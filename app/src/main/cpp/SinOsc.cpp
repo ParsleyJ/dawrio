@@ -28,6 +28,6 @@ float SinOsc::emitOutput(size_t index) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Element_00024Companion_createSinOsc(JNIEnv *env, jobject thiz) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createSinOsc(JNIEnv *env, jobject thiz) {
     return reinterpret_cast<jlong>(new SinOsc());
 }

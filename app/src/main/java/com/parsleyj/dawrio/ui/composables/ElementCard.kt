@@ -31,7 +31,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -51,10 +50,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
-import com.parsleyj.dawrio.daw.Element
-import com.parsleyj.dawrio.daw.InPort
-import com.parsleyj.dawrio.daw.OutPort
-import com.parsleyj.dawrio.daw.Route
+import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.elementroute.ElementInPort
+import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
+import com.parsleyj.dawrio.daw.elementroute.Route
 
 
 @Composable
@@ -63,7 +62,7 @@ fun ElementCard(
     allElements: List<Element>,
     allRoutes: List<Route>,
     imageVector: ImageVector = Icons.Outlined.Warning,
-    onSetRoute: (input: InPort, it: OutPort?) -> Unit,
+    onSetRoute: (input: ElementInPort, it: ElementOutPort?) -> Unit,
     innerContent: @Composable ColumnScope.() -> Unit
 ) {
     val headerHeight = 64.dp
@@ -99,7 +98,7 @@ fun ElementCard(
 private fun DeviceCardHeader(
     headerHeight: Dp,
     imageVector: ImageVector,
-    deviceName: String
+    elementName: String
 ) {
     Card(
         modifier = Modifier
@@ -135,7 +134,7 @@ private fun DeviceCardHeader(
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = deviceName,
+                text = elementName,
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -148,7 +147,7 @@ private fun DeviceCardInputSection(
     allElements: List<Element>,
     allRoutes: List<Route>,
     inputsHeight: Dp,
-    onSetRoute: (input: InPort, it: OutPort?) -> Unit,
+    onSetRoute: (input: ElementInPort, it: ElementOutPort?) -> Unit,
 ) {
 
     val otherDevices = allElements.filter { it.handle != element.handle }
@@ -179,7 +178,7 @@ private fun DeviceCardInputSection(
                     if (showDialog) {
                         SelectSourceDialog(
                             elements = otherDevices,
-                            inPort = input,
+                            elementInPort = input,
                             selected = routeIn?.outPort,
                             onSelectSource = { onSetRoute(input, it) },
                             onDismiss = { showDialog = false },
@@ -279,13 +278,13 @@ private fun DeviceCardOutputSection(
 @Composable
 fun SelectSourceDialog(
     elements: List<Element>,
-    inPort: InPort,
-    selected: OutPort?,
-    onSelectSource: (OutPort?) -> Unit,
+    elementInPort: ElementInPort,
+    selected: ElementOutPort?,
+    onSelectSource: (ElementOutPort?) -> Unit,
     onDismiss: () -> Unit,
 ) {
 
-    val otherDevices = elements.filter { it.handle != inPort.element.handle }
+    val otherElements = elements.filter { it.handle != elementInPort.element.handle }
 
     var selectedOption by remember { mutableStateOf(selected) }
     Dialog(onDismissRequest = onDismiss) {
@@ -302,12 +301,12 @@ fun SelectSourceDialog(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = "for ${inPort.element.label}/${inPort.portName}",
+                    text = "for ${elementInPort.element.label}/${elementInPort.portName}",
                     style = MaterialTheme.typography.labelMedium
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
-
+                Divider(color = MaterialTheme.colorScheme.outline)
                 LazyColumn(modifier = Modifier.height(500.dp)) {
                     item {
                         SelectSourceDialogOption(
@@ -317,7 +316,7 @@ fun SelectSourceDialog(
                         )
                     }
                     itemsIndexed(
-                        otherDevices.flatMap { it.allOutputs }
+                        otherElements.flatMap { it.allOutputs }
                     ) { _, outPort ->
                         SelectSourceDialogOption(
                             text = "$outPort",
@@ -327,6 +326,7 @@ fun SelectSourceDialog(
                     }
                 }
 
+                Divider(color = MaterialTheme.colorScheme.outline)
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
@@ -359,7 +359,9 @@ fun SelectSourceDialogOption(
     onSelect: () -> Unit
 ) {
     Row(
-        modifier=Modifier.clickable { onSelect() },
+        modifier = Modifier
+            .clickable { onSelect() }
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(

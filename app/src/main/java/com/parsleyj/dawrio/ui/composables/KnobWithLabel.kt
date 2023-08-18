@@ -22,8 +22,7 @@ fun KnobWithLabel(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     initialValue: Float = valueRange.start,
-    padding: Dp = 8.dp, //TODO move to modifier
-    size: Dp = 64.dp,//TODO move to modifier
+    knobSize: Dp = 64.dp,
     format: (f: Float) -> String = ValueFormat.Decimal(1).convertToString
 ) {
     var value by remember { mutableStateOf(initialValue) }
@@ -31,10 +30,10 @@ fun KnobWithLabel(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(padding)
+        modifier = Modifier.padding(8.dp)
     ) {
         Knob(
-            modifier = Modifier.size(size),
+            modifier = Modifier.size(knobSize),
             valueRange = valueRange,
             onValueChange = { f ->
                 text = format(f)
@@ -42,7 +41,7 @@ fun KnobWithLabel(
                 onValueChange(f)
             },
         )
-        Spacer(Modifier.size(padding))
+        Spacer(Modifier.size(8.dp))
         Text(
             text = text,
             textAlign = TextAlign.Center

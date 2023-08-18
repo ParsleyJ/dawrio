@@ -23,18 +23,18 @@ float Volume::emitOutput(size_t index) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Element_00024Companion_createVolume(JNIEnv *env, jobject thiz, jfloat amount) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createVolume(JNIEnv *env, jobject thiz, jfloat amount) {
     return reinterpret_cast<jlong>(new Volume(amount));
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_elements_Volume_00024Companion_getAmount(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_getAmount(JNIEnv *env, jobject thiz,
                                                                     jlong addr) {
     return reinterpret_cast<Volume *>(addr)->getAmount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_elements_Volume_00024Companion_setAmount(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_setAmount(JNIEnv *env, jobject thiz,
                                                                     jlong addr, jfloat amount) {
     reinterpret_cast<Volume *>(addr)->setAmount(amount);
 }

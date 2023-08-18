@@ -1,11 +1,11 @@
 package com.parsleyj.dawrio
 
-import com.parsleyj.dawrio.daw.Component
-import com.parsleyj.dawrio.daw.KnobComponent
-import com.parsleyj.dawrio.daw.LFOComponent
-import com.parsleyj.dawrio.daw.SquareOscComponent
+import com.parsleyj.dawrio.daw.components.Component
+import com.parsleyj.dawrio.daw.components.KnobComponent
+import com.parsleyj.dawrio.daw.components.LFOComponent
+import com.parsleyj.dawrio.daw.components.SquareOscComponent
 import com.parsleyj.dawrio.daw.Voice
-import com.parsleyj.dawrio.daw.VolumeComponent
+import com.parsleyj.dawrio.daw.components.VolumeComponent
 
 object Engine {
     // Used to load the 'dawrio' library on application startup.
@@ -28,7 +28,7 @@ object Engine {
                 VolumeComponent()
             ).forEach {
                 components.add(it)
-                addDevice(it.element)
+                addElement(it.element)
             }
 
 

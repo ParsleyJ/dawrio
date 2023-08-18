@@ -1,17 +1,14 @@
-package com.parsleyj.dawrio.daw.elements
+package com.parsleyj.dawrio.daw.element
 
-import com.parsleyj.dawrio.daw.Element
-import com.parsleyj.dawrio.daw.ElementHandle
-import com.parsleyj.dawrio.daw.DeviceType
-import com.parsleyj.dawrio.daw.InPort
-import com.parsleyj.dawrio.daw.OutPort
 import com.parsleyj.dawrio.daw.Voice
+import com.parsleyj.dawrio.daw.elementroute.ElementInPort
+import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
 fun Voice.VoiceUpdater.constEmitter(
     initialValue: Float,
     label: String,
     description: String = "",
-):ConstEmitter = addDevice(ConstEmitter(initialValue, label, description))
+):ConstEmitter = addElement(ConstEmitter(initialValue, label, description))
 
 class ConstEmitter(
     initialValue: Float,
@@ -19,17 +16,14 @@ class ConstEmitter(
     description: String = "",
     handle: ElementHandle = ElementHandle(createConstEmitter(initialValue))
 ) : Element(label, description, handle) {
-    override val type: DeviceType
-        get() = DeviceType.Generator
-
-    override val allInputs: List<InPort>
+    override val allInputs: List<ElementInPort>
         get() = listOf()
 
-    override val allOutputs: List<OutPort>
+    override val allOutputs: List<ElementOutPort>
         get() = listOf(outPort)
 
-    val outPort: OutPort
-        get() = OutPort(this, "constant", 0)
+    val outPort: ElementOutPort
+        get() = ElementOutPort(this, "constant", 0)
 
     var value: Float
         get() = getValue(handle.toAddress)

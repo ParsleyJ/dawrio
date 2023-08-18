@@ -17,6 +17,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,7 +26,7 @@ fun Knob(
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     angleRange: ClosedFloatingPointRange<Float> = 25f..335f,
     orientation: Orientation = Orientation.Vertical,
-    strokeWidth: Float = 5.0f,
+    strokeWidth: Dp = 2.dp,
     fineModeDelayMs:Long = 1000L,
     onValueChange: (Float) -> Unit
 ) {
@@ -102,14 +103,14 @@ fun Knob(
                 )
                 this.drawCircle(
                     color = if(inFineSettingMode) fineLineColor else lineColor,
-                    style = Stroke(width = strokeWidth),
+                    style = Stroke(width = strokeWidth.toPx()),
                     radius = radius,
                 )
                 this.drawLine(
                     color = if(inFineSettingMode) fineLineColor else lineColor,
                     start = this.center,
                     end = this.center + Offset(0.0f, radius),
-                    strokeWidth = strokeWidth
+                    strokeWidth = strokeWidth.toPx()
                 )
             }
         )

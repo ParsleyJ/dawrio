@@ -23,7 +23,7 @@ Route::Route(
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Route_00024Companion_createRoute(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_elementroute_Route_00024Companion_createRoute(JNIEnv *env, jobject thiz,
                                                               jlong out_device, jint out_port,
                                                               jlong in_device, jint in_port) {
     return reinterpret_cast<jlong>(new Route(out_device, out_port, in_device, in_port));

@@ -4,9 +4,9 @@
 
 #include <atomic>
 #include <stdint.h>
-#include "Device.h"
+#include "Element.h"
 
-class SinOsc : public Device {
+class SinOsc : public Element {
 public:
     void processState(int32_t sampleRate) override;
     size_t getOutputsCount() override {

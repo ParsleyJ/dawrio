@@ -3,6 +3,7 @@ package com.parsleyj.dawrio.ui.composables
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,28 +51,28 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
-import com.parsleyj.dawrio.daw.Device
+import com.parsleyj.dawrio.daw.Element
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
 import com.parsleyj.dawrio.daw.Route
 
 
 @Composable
-fun DeviceCard(
-    device: Device,
-    allDevices: List<Device>,
+fun ElementCard(
+    element: Element,
+    allElements: List<Element>,
     allRoutes: List<Route>,
     imageVector: ImageVector = Icons.Outlined.Warning,
-    onSetRoute: (input: InPort, it: OutPort?)->Unit,
+    onSetRoute: (input: InPort, it: OutPort?) -> Unit,
     innerContent: @Composable ColumnScope.() -> Unit
 ) {
     val headerHeight = 64.dp
     val inputsHeight = 64.dp
     val outputsHeight = 40.dp
 
-    val inputs = device.allInputs
-    val outputs = device.allOutputs
-    val deviceName = device.label
+    val inputs = element.allInputs
+    val outputs = element.allOutputs
+    val deviceName = element.label
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -80,7 +81,7 @@ fun DeviceCard(
     ) {
         DeviceCardHeader(headerHeight, imageVector, deviceName)
         if (inputs.isNotEmpty()) {
-            DeviceCardInputSection(device, allDevices, allRoutes, inputsHeight, onSetRoute)
+            DeviceCardInputSection(element, allElements, allRoutes, inputsHeight, onSetRoute)
             Divider(color = MaterialTheme.colorScheme.outline)
         }
 
@@ -88,7 +89,7 @@ fun DeviceCard(
 
         if (outputs.isNotEmpty()) {
             Divider(color = MaterialTheme.colorScheme.outline)
-            DeviceCardOutputSection(device, allRoutes, outputsHeight)
+            DeviceCardOutputSection(element, allRoutes, outputsHeight)
         }
     }
 
@@ -143,15 +144,15 @@ private fun DeviceCardHeader(
 
 @Composable
 private fun DeviceCardInputSection(
-    device: Device,
-    allDevices: List<Device>,
+    element: Element,
+    allElements: List<Element>,
     allRoutes: List<Route>,
     inputsHeight: Dp,
-    onSetRoute: (input: InPort, it: OutPort?)->Unit,
+    onSetRoute: (input: InPort, it: OutPort?) -> Unit,
 ) {
 
-    val otherDevices = allDevices.filter { it.handle != device.handle }
-    val inputs = device.allInputs
+    val otherDevices = allElements.filter { it.handle != element.handle }
+    val inputs = element.allInputs
     Box(
         modifier = Modifier
             .height(inputsHeight)
@@ -160,8 +161,7 @@ private fun DeviceCardInputSection(
         Row(
             modifier = Modifier.fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically,
-
-            ) {
+        ) {
             Spacer(modifier = Modifier.width(10.dp))
             Text(text = "IN")
             Spacer(modifier = Modifier.width(20.dp))
@@ -178,7 +178,7 @@ private fun DeviceCardInputSection(
                     val hasRouteIn = routeIn != null
                     if (showDialog) {
                         SelectSourceDialog(
-                            devices = otherDevices,
+                            elements = otherDevices,
                             inPort = input,
                             selected = routeIn?.outPort,
                             onSelectSource = { onSetRoute(input, it) },
@@ -225,14 +225,13 @@ private fun DeviceCardInputSection(
 }
 
 
-
 @Composable
 private fun DeviceCardOutputSection(
-    device: Device,
+    element: Element,
     allRoutes: List<Route>,
     outputsHeight: Dp,
 ) {
-    val outputs = device.allOutputs
+    val outputs = element.allOutputs
     Box(
         modifier = Modifier
             .height(outputsHeight)
@@ -279,20 +278,17 @@ private fun DeviceCardOutputSection(
 
 @Composable
 fun SelectSourceDialog(
-    devices: List<Device>,
+    elements: List<Element>,
     inPort: InPort,
     selected: OutPort?,
     onSelectSource: (OutPort?) -> Unit,
     onDismiss: () -> Unit,
 ) {
 
-    val otherDevices = devices.filter { it.handle != inPort.device.handle }
+    val otherDevices = elements.filter { it.handle != inPort.element.handle }
 
     var selectedOption by remember { mutableStateOf(selected) }
-    Dialog(
-        onDismissRequest = onDismiss,
-
-        ) {
+    Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier.width(300.dp),
             shape = RoundedCornerShape(10.dp),
@@ -302,40 +298,35 @@ fun SelectSourceDialog(
                     text = "Select source",
                     style = MaterialTheme.typography.titleLarge
                 )
+
                 Spacer(modifier = Modifier.height(2.dp))
+
                 Text(
-                    text = "for ${inPort.device.label}/${inPort.portName}",
+                    text = "for ${inPort.element.label}/${inPort.portName}",
                     style = MaterialTheme.typography.labelMedium
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
+
                 LazyColumn(modifier = Modifier.height(500.dp)) {
                     item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = selectedOption == null,
-                                onClick = { selectedOption = null }
-                            )
-                            Text(text = "None", modifier = Modifier.padding(start = 10.dp))
-                        }
+                        SelectSourceDialogOption(
+                            text = "None",
+                            currentlySelected = selectedOption == null,
+                            onSelect = { selectedOption = null }
+                        )
                     }
                     itemsIndexed(
                         otherDevices.flatMap { it.allOutputs }
                     ) { _, outPort ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = selectedOption == outPort,
-                                onClick = {
-                                    selectedOption = outPort
-                                }
-                            )
-                            Text(text = "$outPort", modifier = Modifier.padding(start = 10.dp))
-                        }
+                        SelectSourceDialogOption(
+                            text = "$outPort",
+                            currentlySelected = selectedOption == outPort,
+                            onSelect = { selectedOption = outPort }
+                        )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
@@ -361,35 +352,25 @@ fun SelectSourceDialog(
     }
 }
 
-
 @Composable
-fun KindRadioGroup(
-    mItems: List<String>,
-    selected: String,
-    setSelected: (selected: String) -> Unit,
+fun SelectSourceDialogOption(
+    text: String,
+    currentlySelected: Boolean,
+    onSelect: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Row(
+        modifier=Modifier.clickable { onSelect() },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        mItems.forEach { item ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
-                    selected = selected == item,
-                    onClick = {
-                        setSelected(item)
-                    },
-                    enabled = true,
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-                Text(text = item, modifier = Modifier.padding(start = 8.dp))
-            }
-        }
+        RadioButton(
+            selected = currentlySelected,
+            onClick = { onSelect() }
+        )
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .clickable { onSelect() }
+        )
     }
-
 }

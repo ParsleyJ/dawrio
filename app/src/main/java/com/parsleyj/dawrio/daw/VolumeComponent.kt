@@ -9,17 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.device.Volume
+import com.parsleyj.dawrio.daw.elements.Volume
 import com.parsleyj.dawrio.util.NameGenerator
 
 class VolumeComponent(
     label: String = NameGenerator.newName("Volume"),
     description: String = "",
 ) : Component {
-    override val device: Device = Volume(1.0f, label, description)
+    override val element: Element = Volume(1.0f, label, description)
 
     @Composable
-    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+    override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

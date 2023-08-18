@@ -9,17 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.device.SquareOsc
+import com.parsleyj.dawrio.daw.elements.SquareOsc
 import com.parsleyj.dawrio.util.NameGenerator
 
 class SquareOscComponent(
     label: String = NameGenerator.newName("SquareOSC"),
     description: String = "",
 ) : Component {
-    override val device: Device = SquareOsc(label, description)
+    override val element: Element = SquareOsc(label, description)
 
     @Composable
-    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+    override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

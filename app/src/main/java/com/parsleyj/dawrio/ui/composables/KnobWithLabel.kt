@@ -24,7 +24,7 @@ fun KnobWithLabel(
     initialValue: Float = valueRange.start,
     padding: Dp = 8.dp,
     size: Dp = 64.dp,
-    format: (f:Float)->String = ValueFormat.Decimal(1).convertToString
+    format: (f: Float) -> String = ValueFormat.Decimal(1).convertToString
 ) {
     var value by remember { mutableStateOf(initialValue) }
     var text by remember(value, format) { mutableStateOf(format(value)) }

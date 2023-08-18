@@ -1,18 +1,14 @@
 package com.parsleyj.dawrio.daw
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.parsleyj.dawrio.daw.device.ConstEmitter
+import com.parsleyj.dawrio.daw.elements.ConstEmitter
 import com.parsleyj.dawrio.ui.composables.KnobWithLabel
 import com.parsleyj.dawrio.util.NameGenerator
 
@@ -26,8 +22,8 @@ class KnobComponent(
 
 
     @Composable
-    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
-        val inPorts = device.outPort.findRoutes(allRoutes).map { it.inPort }
+    override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
+        val inPorts = element.outPort.findRoutes(allRoutes).map { it.inPort }
         val valueFormat = if (inPorts.size == 1) {
             inPorts[0].streamFormat
         } else {
@@ -44,7 +40,7 @@ class KnobComponent(
             ) {
 
                 KnobWithLabel(
-                    onValueChange = { device.value = it },
+                    onValueChange = { element.value = it },
                     initialValue = initialValue,
                     valueRange = range,
                     format = valueFormat.convertToString
@@ -54,6 +50,6 @@ class KnobComponent(
     }
 
 
-    override val device: ConstEmitter = ConstEmitter(initialValue, label, description)
+    override val element: ConstEmitter = ConstEmitter(initialValue, label, description)
 
 }

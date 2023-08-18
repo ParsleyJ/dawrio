@@ -6,9 +6,9 @@
 #define DAWRIO_VOLUME_H
 
 
-#include "Device.h"
+#include "Element.h"
 
-class Volume:public Device {
+class Volume:public Element {
 public:
     Volume(float am): amount_(am){}
 

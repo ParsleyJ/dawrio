@@ -30,7 +30,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         SinOsc.cpp
         AudioEngine.cpp
         Voice.cpp
-        Device.h
+        Element.h
         ConstEmitter.cpp
         Route.cpp
         SawOsc.cpp

@@ -4,31 +4,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.parsleyj.dawrio.ui.composables.DeviceCard
+import com.parsleyj.dawrio.ui.composables.ElementCard
 
 
 interface Component {
     @Composable
     fun ComponentGUI(
-        allDevices: List<Device>,
+        allElements: List<Element>,
         allRoutes: List<Route>,
         onSetRoute: (input: InPort, output: OutPort?) -> Unit,
     ) {
-        DeviceCard(
-            device = device,
-            allDevices = allDevices,
+        ElementCard(
+            element = element,
+            allElements = allElements,
             allRoutes = allRoutes,
             imageVector = icon,
             onSetRoute = onSetRoute,
         ) {
-            InnerGUI(allDevices, allRoutes)
+            InnerGUI(allElements, allRoutes)
         }
     }
 
     @Composable
-    fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>)
+    fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>)
 
     val icon: ImageVector get() = Icons.Outlined.Warning
 
-    val device: Device
+    val element: Element
 }

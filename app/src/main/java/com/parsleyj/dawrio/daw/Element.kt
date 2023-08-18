@@ -2,10 +2,10 @@ package com.parsleyj.dawrio.daw
 
 
 @JvmInline
-value class DeviceHandle(val toAddress: Long)
+value class ElementHandle(val toAddress: Long)
 
-fun Long.toDevice(): DeviceHandle {
-    return DeviceHandle(this)
+fun Long.toElementHandle(): ElementHandle {
+    return ElementHandle(this)
 }
 
 fun Float.scaleIn(range: ClosedFloatingPointRange<Float>): Float {
@@ -28,12 +28,12 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
 
 
 class OutPort(
-    val device: Device,
+    val element: Element,
     val portName: String,
     val portNumber: Int,
 ) {
     fun getValue(): Float {
-        return Device.readDeviceOutput(device.handle.toAddress, portNumber)
+        return Element.readElementOutput(element.handle.toAddress, portNumber)
     }
 
     fun connectionTo(inPort: InPort): Route {
@@ -45,25 +45,25 @@ class OutPort(
         if (other !is OutPort) return false
 
         if (portNumber != other.portNumber) return false
-        if (device.handle.toAddress != other.device.handle.toAddress) return false
+        if (element.handle.toAddress != other.element.handle.toAddress) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = portNumber
-        result = 31 * result + device.handle.toAddress.hashCode()
+        result = 31 * result + element.handle.toAddress.hashCode()
         return result
     }
 
-    override fun toString() = "${this.device.label}/${this.portName}"
+    override fun toString() = "${this.element.label}/${this.portName}"
     fun findRoutes(allRoutes: List<Route>): List<Route> = allRoutes.filter { this == it.outPort }
 
 
 }
 
 class InPort(
-    val device: Device,
+    val element: Element,
     val portName: String,
     val portNumber: Int,
     val streamFormat: ValueFormat = ValueFormat.Decimal(1)
@@ -79,18 +79,18 @@ class InPort(
         if (other !is InPort) return false
 
         if (portNumber != other.portNumber) return false
-        if (device.handle.toAddress != other.device.handle.toAddress) return false
+        if (element.handle.toAddress != other.element.handle.toAddress) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = portNumber
-        result = 31 * result + device.handle.toAddress.hashCode()
+        result = 31 * result + element.handle.toAddress.hashCode()
         return result
     }
 
-    override fun toString() = "${this.device.label}/${this.portName}"
+    override fun toString() = "${this.element.label}/${this.portName}"
 }
 
 @JvmInline
@@ -101,20 +101,20 @@ class Route(
     val inPort: InPort,
     val handle: RouteHandle = RouteHandle(
         createRoute(
-            outPort.device.handle.toAddress,
+            outPort.element.handle.toAddress,
             outPort.portNumber,
-            inPort.device.handle.toAddress,
+            inPort.element.handle.toAddress,
             inPort.portNumber
         )
     )
 ) {
 
-    val inDevice: Device get() = inPort.device
-    val outDevice: Device get() = outPort.device
-    val inDeviceHandle: DeviceHandle get() = inDevice.handle
-    val outDeviceHandle: DeviceHandle get() = outDevice.handle
-    val inDeviceAddress: Long = inDeviceHandle.toAddress
-    val outDeviceAddress: Long = outDeviceHandle.toAddress
+    val inElement: Element get() = inPort.element
+    val outElement: Element get() = outPort.element
+    val inElementHandle: ElementHandle get() = inElement.handle
+    val outElementHandle: ElementHandle get() = outElement.handle
+    val inElementAddress: Long = inElementHandle.toAddress
+    val outElementAddress: Long = outElementHandle.toAddress
     val inPortNumber: Int = inPort.portNumber
     val outPortNumber: Int = outPort.portNumber
 
@@ -138,10 +138,10 @@ enum class DeviceType {
     Generator, Effect
 }
 
-abstract class Device protected constructor(
+abstract class Element protected constructor(
     val label: String,
     val description: String = "",
-    val handle: DeviceHandle
+    val handle: ElementHandle
 ) {
 
     abstract val type: DeviceType
@@ -154,7 +154,7 @@ abstract class Device protected constructor(
 
 
     companion object {
-        external fun readDeviceOutput(deviceAddress: Long, portNumber: Int): Float
+        external fun readElementOutput(deviceAddress: Long, portNumber: Int): Float
         external fun destroy(deviceAddress: Long)
         external fun createSinOsc(): Long
         external fun createSawOsc(): Long

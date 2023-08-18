@@ -22,16 +22,16 @@ Java_com_parsleyj_dawrio_Engine_stopEngine(JNIEnv *env, jobject jthis) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Device_00024Companion_destroy(JNIEnv *env, jobject thiz,
-                                                           jlong device_address) {
-    delete reinterpret_cast<Device *>(device_address);
+Java_com_parsleyj_dawrio_daw_Element_00024Companion_destroy(JNIEnv *env, jobject thiz,
+                                                            jlong device_address) {
+    delete reinterpret_cast<Element *>(device_address);
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_Device_00024Companion_readDeviceOutput(JNIEnv *env, jobject thiz,
-                                                                    jlong device_address,
-                                                                    jint port_number) {
-    return reinterpret_cast<Device *>(device_address)->emitOutput(port_number);
+Java_com_parsleyj_dawrio_daw_Element_00024Companion_readElementOutput(JNIEnv *env, jobject thiz,
+                                                                      jlong device_address,
+                                                                      jint port_number) {
+    return reinterpret_cast<Element *>(device_address)->emitOutput(port_number);
 }
 
 extern "C"

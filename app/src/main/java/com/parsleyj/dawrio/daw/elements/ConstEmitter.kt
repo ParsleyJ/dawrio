@@ -1,7 +1,7 @@
-package com.parsleyj.dawrio.daw.device
+package com.parsleyj.dawrio.daw.elements
 
-import com.parsleyj.dawrio.daw.Device
-import com.parsleyj.dawrio.daw.DeviceHandle
+import com.parsleyj.dawrio.daw.Element
+import com.parsleyj.dawrio.daw.ElementHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
@@ -17,8 +17,8 @@ class ConstEmitter(
     initialValue: Float,
     label: String,
     description: String = "",
-    handle: DeviceHandle = DeviceHandle(createConstEmitter(initialValue))
-) : Device(label, description, handle) {
+    handle: ElementHandle = ElementHandle(createConstEmitter(initialValue))
+) : Element(label, description, handle) {
     override val type: DeviceType
         get() = DeviceType.Generator
 

@@ -2,8 +2,8 @@ package com.parsleyj.dawrio
 
 import androidx.lifecycle.ViewModel
 import com.parsleyj.dawrio.daw.Component
-import com.parsleyj.dawrio.daw.Device
-import com.parsleyj.dawrio.daw.DeviceHandle
+import com.parsleyj.dawrio.daw.Element
+import com.parsleyj.dawrio.daw.ElementHandle
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
 import com.parsleyj.dawrio.daw.Route
@@ -22,8 +22,8 @@ class VoiceViewModel : ViewModel() {
     val voice: Voice = privatePair.first
 
 
-    private val _devices = MutableStateFlow(listOf<Device>())
-    val devices: StateFlow<List<Device>> = _devices.asStateFlow()
+    private val _devices = MutableStateFlow(listOf<Element>())
+    val devices: StateFlow<List<Element>> = _devices.asStateFlow()
 
     private val _routes = MutableStateFlow(listOf<Route>())
     val routes: StateFlow<List<Route>> = _routes.asStateFlow()
@@ -36,7 +36,7 @@ class VoiceViewModel : ViewModel() {
 
     init {
         _devices.update {
-            voice.devices
+            voice.elements
         }
         _routes.update {
             voice.routes
@@ -61,7 +61,7 @@ class VoiceViewModel : ViewModel() {
         }
     }
 
-    inline fun <reified T:Device> getDevice(handle: DeviceHandle): Flow<T?> {
+    inline fun <reified T:Element> getDevice(handle: ElementHandle): Flow<T?> {
         return devices.transform { list ->
             (list.find { it.handle == handle } as? T)?.let { emit(it) } ?: emit(null)
         }

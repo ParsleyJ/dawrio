@@ -8,16 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.parsleyj.dawrio.R
-import com.parsleyj.dawrio.daw.device.ConstEmitter
+import com.parsleyj.dawrio.daw.elements.ConstEmitter
 import com.parsleyj.dawrio.ui.composables.BottomLabeled
 import com.parsleyj.dawrio.ui.composables.PushGateButton
 import com.parsleyj.dawrio.util.NameGenerator
@@ -29,7 +27,7 @@ class PushComponent(
 ) : Component {
 
     @Composable
-    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+    override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
 
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Row(
@@ -38,8 +36,8 @@ class PushComponent(
             ) {
                 BottomLabeled(label = "Hear") {
                     PushGateButton(
-                        onStartPush = { device.value = range.endInclusive },
-                        onStopPush = { device.value = range.start }
+                        onStartPush = { element.value = range.endInclusive },
+                        onStopPush = { element.value = range.start }
                     ) {
                         Image(
                             modifier = Modifier.fillMaxSize(0.9f),
@@ -56,5 +54,5 @@ class PushComponent(
     }
 
 
-    override val device: ConstEmitter = ConstEmitter(0.0f, label, description)
+    override val element: ConstEmitter = ConstEmitter(0.0f, label, description)
 }

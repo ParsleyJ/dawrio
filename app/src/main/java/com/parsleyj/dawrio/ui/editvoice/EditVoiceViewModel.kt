@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.parsleyj.dawrio.data.ProjectRepository
-import com.parsleyj.dawrio.daw.Device
+import com.parsleyj.dawrio.daw.Element
 import com.parsleyj.dawrio.daw.Route
 import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.VoiceHandle
@@ -17,7 +17,7 @@ class EditVoiceViewModel(
     private val repository: ProjectRepository
 ) : ViewModel() {
 
-    val devices = MutableLiveData<List<Device>>()
+    val devices = MutableLiveData<List<Element>>()
 
     val routes = MutableLiveData<List<Route>>()
 
@@ -44,7 +44,7 @@ class EditVoiceViewModel(
     }
 
     private fun onVoiceLoaded(voice: Voice) {
-        devices.value = voice.devices
+        devices.value = voice.elements
         routes.value = voice.routes
         _dataLoading.value = false
         isDataLoaded = true

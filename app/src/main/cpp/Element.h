@@ -2,8 +2,8 @@
 // Created by pj on 13/08/23.
 //
 
-#ifndef DAWRIO_DEVICE_H
-#define DAWRIO_DEVICE_H
+#ifndef DAWRIO_ELEMENT_H
+#define DAWRIO_ELEMENT_H
 
 #include <stdint.h>
 #include <string>
@@ -13,7 +13,7 @@
 #include "Route.h"
 
 
-class Device {
+class Element {
 public:
     virtual void processState(int32_t sampleRate) = 0;
 
@@ -23,7 +23,7 @@ public:
 
     virtual float emitOutput(size_t index) = 0;
 
-    virtual ~Device() {
+    virtual ~Element() {
         routes_.clear();
     }
 
@@ -41,11 +41,11 @@ public:
 
 
 protected:
-    Device *getOtherDevice(jlong address) {
+    Element *getOtherDevice(jlong address) {
         if (address == 0) {
             return nullptr;
         }
-        Device *result = reinterpret_cast<Device *>(address);
+        Element *result = reinterpret_cast<Element *>(address);
         return result;
     }
 
@@ -60,7 +60,7 @@ protected:
                 continue;
             }
 
-            Device *device = getOtherDevice(item->outDevice);
+            Element *device = getOtherDevice(item->outDevice);
             if (device == nullptr) {
                 continue;
             }
@@ -75,4 +75,4 @@ protected:
 
 };
 
-#endif //DAWRIO_DEVICE_H
+#endif //DAWRIO_ELEMENT_H

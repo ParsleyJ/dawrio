@@ -1,7 +1,7 @@
-package com.parsleyj.dawrio.daw.device
+package com.parsleyj.dawrio.daw.elements
 
-import com.parsleyj.dawrio.daw.Device
-import com.parsleyj.dawrio.daw.DeviceHandle
+import com.parsleyj.dawrio.daw.Element
+import com.parsleyj.dawrio.daw.ElementHandle
 import com.parsleyj.dawrio.daw.DeviceType
 import com.parsleyj.dawrio.daw.InPort
 import com.parsleyj.dawrio.daw.OutPort
@@ -16,8 +16,8 @@ fun Voice.VoiceUpdater.lfo(
 class LFO(
     label:String,
     description: String = "",
-    handle: DeviceHandle = DeviceHandle(createLFO()),
-) : Device(label, description, handle) {
+    handle: ElementHandle = ElementHandle(createLFO()),
+) : Element(label, description, handle) {
     override val type: DeviceType
         get() = DeviceType.Generator
 

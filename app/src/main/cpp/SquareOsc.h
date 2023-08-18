@@ -6,10 +6,10 @@
 #define DAWRIO_SQUAREOSC_H
 
 
-#include "Device.h"
+#include "Element.h"
 #include <cstdint>
 
-class SquareOsc : public Device {
+class SquareOsc : public Element {
 public:
     void processState(int32_t sampleRate) override;
     size_t getOutputsCount() override {

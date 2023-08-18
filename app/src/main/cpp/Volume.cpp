@@ -23,7 +23,7 @@ float Volume::emitOutput(size_t index) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Device_00024Companion_createVolume(JNIEnv *env, jobject thiz, jfloat amount) {
+Java_com_parsleyj_dawrio_daw_Element_00024Companion_createVolume(JNIEnv *env, jobject thiz, jfloat amount) {
     return reinterpret_cast<jlong>(new Volume(amount));
 }
 extern "C"

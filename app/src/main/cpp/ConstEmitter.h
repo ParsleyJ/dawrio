@@ -6,9 +6,9 @@
 #define DAWRIO_CONSTEMITTER_H
 
 
-#include "Device.h"
+#include "Element.h"
 
-class ConstEmitter : public Device {
+class ConstEmitter : public Element {
 public:
     ConstEmitter(float f){
         emitted_.store(f);

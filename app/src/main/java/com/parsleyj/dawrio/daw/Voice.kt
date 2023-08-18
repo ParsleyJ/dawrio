@@ -11,8 +11,8 @@ value class VoiceHandle(val toAddress: Long)
 class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
 
-    private val devicesPrivate: MutableMap<DeviceHandle, Device> = mutableMapOf()
-    val devices: List<Device>
+    private val devicesPrivate: MutableMap<ElementHandle, Element> = mutableMapOf()
+    val elements: List<Element>
         get() = devicesPrivate.values.toList()
 
 
@@ -39,11 +39,11 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         this.routesPrivate[route.handle] = route
     }
 
-    private fun setDeviceWithoutUpdating(device: Device) {
-        this.devicesPrivate[device.handle] = device
+    private fun setDeviceWithoutUpdating(element: Element) {
+        this.devicesPrivate[element.handle] = element
     }
 
-    fun addDevice(dev: Device) {
+    fun addDevice(dev: Element) {
         setDeviceWithoutUpdating(dev)
         commitNativeLayout()
     }
@@ -53,12 +53,12 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         commitNativeLayout()
     }
 
-    fun removeDevice(dev: Device) {
+    fun removeDevice(dev: Element) {
         removeDevice(dev.handle)
         commitNativeLayout()
     }
 
-    fun removeDevice(handle: DeviceHandle) {
+    fun removeDevice(handle: ElementHandle) {
         this.devicesPrivate.remove(handle)
         commitNativeLayout()
     }
@@ -78,7 +78,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         val voice: Voice
         fun InPort.connect(outPort: OutPort): Route
         fun OutPort.connect(inPort: InPort): Route
-        fun <T : Device> addDevice(device: T): T
+        fun <T : Element> addDevice(device: T): T
     }
 
 
@@ -102,7 +102,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
                 return result
             }
 
-            override fun <T : Device> addDevice(device: T): T {
+            override fun <T : Element> addDevice(device: T): T {
                 setDeviceWithoutUpdating(device)
                 return device
             }
@@ -118,9 +118,9 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     private fun commitNativeLayout() {
         updateNativeLayout(
             handle.toAddress,
-            devices.map { it.handle.toAddress }.toLongArray(),
+            elements.map { it.handle.toAddress }.toLongArray(),
             routes.map { it.handle.toAddress }.toLongArray(),
-            if (devices.isEmpty()) 0L else devices.last().handle.toAddress
+            if (elements.isEmpty()) 0L else elements.last().handle.toAddress
         )
     }
 

@@ -22,6 +22,6 @@ float SquareOsc::emitOutput(size_t index) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Device_00024Companion_createSquareOsc(JNIEnv *env, jobject thiz) {
+Java_com_parsleyj_dawrio_daw_Element_00024Companion_createSquareOsc(JNIEnv *env, jobject thiz) {
     return reinterpret_cast<jlong>(new SquareOsc());
 }

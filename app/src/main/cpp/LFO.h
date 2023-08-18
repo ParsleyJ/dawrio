@@ -6,12 +6,12 @@
 #define DAWRIO_LFO_H
 
 
-#include "Device.h"
+#include "Element.h"
 #include <cstdint>
 
 
 class LFO :
-    public Device {
+    public Element {
 
     static const int lfoTypes = 3;
     enum LFOType {

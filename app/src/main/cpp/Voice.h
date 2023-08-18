@@ -7,7 +7,7 @@
 
 #include <atomic>
 #include <vector>
-#include "Device.h"
+#include "Element.h"
 #include "Route.h"
 
 class Voice {
@@ -46,8 +46,8 @@ public:
         return this->devicesAddressesLength_.load();
     }
 
-    Device *getDevice(size_t index) {
-        return reinterpret_cast<Device *>(this->devicesAddresses_.load()[index]);
+    Element *getDevice(size_t index) {
+        return reinterpret_cast<Element *>(this->devicesAddresses_.load()[index]);
     }
 
     jlong* getDevicesAddressRegion() {
@@ -62,8 +62,8 @@ public:
         return this->routesLength_.load();
     }
 
-    Device *getOutDevice() {
-        return reinterpret_cast<Device *>(this->outDevice_.load());
+    Element *getOutDevice() {
+        return reinterpret_cast<Element *>(this->outDevice_.load());
     }
 
 

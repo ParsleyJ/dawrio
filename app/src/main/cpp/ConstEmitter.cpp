@@ -15,8 +15,8 @@ void ConstEmitter::processState(int32_t sampleRate) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Device_00024Companion_createConstEmitter(JNIEnv *env, jobject thiz,
-                                                                      jfloat value) {
+Java_com_parsleyj_dawrio_daw_Element_00024Companion_createConstEmitter(JNIEnv *env, jobject thiz,
+                                                                       jfloat value) {
     return reinterpret_cast<jlong>(new ConstEmitter(value));
 }
 

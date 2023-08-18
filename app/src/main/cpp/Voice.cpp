@@ -18,7 +18,7 @@ void Voice::render(float *audioData, int32_t numFrames) {
 
     for (int i = 0; i < numFrames; i++) {
         for (int d_i = 0; d_i < devCount; ++d_i) {
-            Device *device = getDevice(d_i);
+            Element *device = getDevice(d_i);
             if (device == nullptr) {
                 continue;
             }
@@ -26,7 +26,7 @@ void Voice::render(float *audioData, int32_t numFrames) {
         }
 
         audioData[i] = 0.0f;
-        Device *outDevice = this->getOutDevice();
+        Element *outDevice = this->getOutDevice();
         if (outDevice == nullptr) {
             continue;
         }
@@ -64,7 +64,7 @@ void Voice::setLayout(
     this->outDevice_.store(outDevice);
 
     for (int i = 0; i < devicesLength; i++) {
-        auto d = reinterpret_cast<Device *>(devices[i]);
+        auto d = reinterpret_cast<Element *>(devices[i]);
         d->updateRoutes(routesCasted, routesLength);
     }
 }

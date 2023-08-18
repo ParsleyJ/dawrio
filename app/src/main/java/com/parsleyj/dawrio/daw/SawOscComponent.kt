@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.parsleyj.dawrio.daw.device.SawOsc
+import com.parsleyj.dawrio.daw.elements.SawOsc
 import com.parsleyj.dawrio.util.NameGenerator
 
 class SawOscComponent(
@@ -17,10 +17,10 @@ class SawOscComponent(
     label: String = NameGenerator.newName("SawOSC"),
     description: String = "",
 ) : Component {
-    override val device: Device = SawOsc(label, description)
+    override val element: Element = SawOsc(label, description)
 
     @Composable
-    override fun InnerGUI(allDevices: List<Device>, allRoutes: List<Route>) {
+    override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

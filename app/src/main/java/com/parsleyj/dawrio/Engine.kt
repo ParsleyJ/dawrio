@@ -28,11 +28,8 @@ object Engine {
                 VolumeComponent()
             ).forEach {
                 components.add(it)
-                addDevice(it.device)
+                addDevice(it.element)
             }
-//            knob.device.outPort.connect(osc.device.inFrequency)
-//            osc.device.outAudioL.connect(vol.device.inAudioL)
-//            osc.device.outAudioR.connect(vol.device.inAudioR)
 
 
 //            constEmitter = constEmitter(1.0f, "Lfo Frq")

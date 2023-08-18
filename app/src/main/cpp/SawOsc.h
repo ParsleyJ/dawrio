@@ -6,10 +6,10 @@
 #define DAWRIO_SAWOSC_H
 
 
-#include "Device.h"
+#include "Element.h"
 #include <cstdint>
 
-class SawOsc : public Device{
+class SawOsc : public Element{
     void processState(int32_t sampleRate) override;
     size_t getOutputsCount() override {
         return 2;

@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import com.parsleyj.dawrio.daw.elements.SawOsc
+import com.parsleyj.dawrio.ui.composables.Meter
 import com.parsleyj.dawrio.util.NameGenerator
 
 class SawOscComponent(

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BottomLabeled(
    label:String,
-   padding: Dp = 8.dp,
+   padding: Dp = 8.dp, //TODO move to modifier
    content: @Composable () -> Unit
 ) {
     val text = remember { mutableStateOf(label) }

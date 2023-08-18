@@ -26,13 +26,12 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
 }
 
 
-
 class OutPort(
     val element: Element,
     val portName: String,
     val portNumber: Int,
 ) {
-    fun getValue(): Float {
+    fun readValue(): Float {
         return Element.readElementOutput(element.handle.toAddress, portNumber)
     }
 
@@ -71,6 +70,8 @@ class InPort(
     fun connectionTo(outPort: OutPort): Route {
         return Route(outPort, this)
     }
+
+    fun readValue(routes: List<Route>): Float? = findRoute(routes)?.outPort?.readValue()
 
     fun findRoute(routes: List<Route>): Route? = routes.find { this == it.inPort }
 

@@ -28,6 +28,7 @@ android {
 
         kotlinOptions {
             freeCompilerArgs += "-opt-in=kotlin.contracts.ExperimentalContracts"
+            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         }
     }
 

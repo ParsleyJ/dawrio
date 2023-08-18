@@ -37,7 +37,7 @@ fun Knob(
     }
 
     var value by remember {
-        mutableStateOf(0f)
+        mutableStateOf(valueRange.start)
     }
 
 

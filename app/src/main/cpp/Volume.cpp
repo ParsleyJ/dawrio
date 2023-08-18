@@ -28,13 +28,13 @@ Java_com_parsleyj_dawrio_daw_Element_00024Companion_createVolume(JNIEnv *env, jo
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_device_Volume_00024Companion_getAmount(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_elements_Volume_00024Companion_getAmount(JNIEnv *env, jobject thiz,
                                                                     jlong addr) {
     return reinterpret_cast<Volume *>(addr)->getAmount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_device_Volume_00024Companion_setAmount(JNIEnv *env, jobject thiz,
+Java_com_parsleyj_dawrio_daw_elements_Volume_00024Companion_setAmount(JNIEnv *env, jobject thiz,
                                                                     jlong addr, jfloat amount) {
     reinterpret_cast<Volume *>(addr)->setAmount(amount);
 }

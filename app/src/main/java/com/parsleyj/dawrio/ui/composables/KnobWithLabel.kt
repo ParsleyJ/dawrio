@@ -22,8 +22,8 @@ fun KnobWithLabel(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     initialValue: Float = valueRange.start,
-    padding: Dp = 8.dp,
-    size: Dp = 64.dp,
+    padding: Dp = 8.dp, //TODO move to modifier
+    size: Dp = 64.dp,//TODO move to modifier
     format: (f: Float) -> String = ValueFormat.Decimal(1).convertToString
 ) {
     var value by remember { mutableStateOf(initialValue) }

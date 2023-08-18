@@ -18,7 +18,7 @@ object Engine {
 
         val voice = Voice().edit {
             listOf(
-                KnobComponent(range = 55f..880f),
+                KnobComponent(range = 1f..880f),
                 KnobComponent(range = 0f..8f),
 //                KnobComponent(range = 0f..8f),
 //                KnobComponent(range = 0f..8f),

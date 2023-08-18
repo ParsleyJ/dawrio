@@ -24,7 +24,7 @@ void LFO::processState(int32_t sampleRate) {
 
     float out;
     if (type == Sin) {
-        out = (float) sin(two_pi * this->x_);
+        out = (float) (0.5*sin(two_pi * this->x_)+0.5);
     } else {
         if (type == Saw) {
             out = this->x_;

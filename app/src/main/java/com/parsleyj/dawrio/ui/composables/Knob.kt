@@ -20,15 +20,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun Knob(
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     angleRange: ClosedFloatingPointRange<Float> = 25f..335f,
+    overValue: Float = 0f,
+    overValueRange: ClosedFloatingPointRange<Float> = 0f..0f,
+    overValuePlacementScale: Float = 0.7f,
+    showOverValue: Boolean = true,
     orientation: Orientation = Orientation.Vertical,
     strokeWidth: Dp = 2.dp,
-    fineModeDelayMs:Long = 1000L,
-    onValueChange: (Float) -> Unit
+    fineModeDelayMs: Long = 1000L,
+    onValueChange: (Float) -> Unit = {}
 ) {
 
     val valueRangeSize = valueRange.endInclusive - valueRange.start
@@ -44,6 +49,8 @@ fun Knob(
 
     val lineColor = MaterialTheme.colorScheme.primary
     val sweepColor = MaterialTheme.colorScheme.primaryContainer
+    val overValueLineColor = MaterialTheme.colorScheme.secondary
+    val overValueSweepColor = MaterialTheme.colorScheme.secondaryContainer
     val fineLineColor = MaterialTheme.colorScheme.tertiary
     val fineSweepColor = MaterialTheme.colorScheme.tertiaryContainer
 
@@ -63,17 +70,14 @@ fun Knob(
             lastDragActionTimeInMillis = System.currentTimeMillis()
 
             val fine = inFineSettingMode
-            val v = value - deltaIn160dp * valueRangeSize * 0.5f * if(fine) .1f else 1f
+            val v = value - deltaIn160dp * valueRangeSize * 0.5f * if (fine) .1f else 1f
             val next = v.coerceIn(valueRange)
 
-            val angleRangeSize = angleRange.endInclusive - angleRange.start
 
             isBeingDragged = true
             if (value != next) {
                 value = next
-                val nextAngle = ((next - valueRange.start) / valueRangeSize) * angleRangeSize +
-                    angleRange.start
-                rotation = nextAngle
+                rotation = next.toAngle(valueRange, angleRange)
                 onValueChange(next)
             }
         })
@@ -92,29 +96,83 @@ fun Knob(
                 }
             }
             .rotate(rotation),
+
             onDraw = {
                 val radius = size.minDimension / 2.0f
+                val strokeWidthPx = strokeWidth.toPx()
                 val zero = 90f
+                val lineC = if (inFineSettingMode) fineLineColor else lineColor
+                val fillC = if (inFineSettingMode) fineSweepColor else sweepColor
+
+                val overValueStartAngle =
+                    overValueRange.start.toAngle(valueRange, angleRange) - angleRange.start
+                val overValueEndAngle =
+                    overValueRange.endInclusive.toAngle(valueRange, angleRange) - angleRange.start
+                val overValueAngle =
+                    overValue.toAngle(valueRange, angleRange) - angleRange.start
+
                 this.drawArc(
-                    color = if(inFineSettingMode) fineSweepColor else sweepColor,
+                    color = fillC,
                     startAngle = zero,
-                    sweepAngle = -(rotation-angleRange.start),
+                    sweepAngle = -(rotation - angleRange.start),
+                    useCenter = true,
+                )
+
+                //Over value sweep
+                this.drawArc(
+                    color = overValueSweepColor,
+                    startAngle = zero,
+                    sweepAngle = overValueAngle,
+                    size = this.size * overValuePlacementScale,
+                    topLeft = this.center - Offset(
+                        this.size.width / 2f * overValuePlacementScale,
+                        this.size.height / 2f * overValuePlacementScale,
+                    ),
                     useCenter = true
                 )
+                //Outer circle
                 this.drawCircle(
-                    color = if(inFineSettingMode) fineLineColor else lineColor,
-                    style = Stroke(width = strokeWidth.toPx()),
+                    color = lineC,
+                    style = Stroke(width = strokeWidthPx),
                     radius = radius,
                 )
+                //Little point at center
+                this.drawCircle(
+                    color = lineC,
+                    radius = strokeWidthPx / 2f,
+                )
+                // Over value line for over value range
+                this.drawArc(
+                    color = overValueLineColor,
+                    style = Stroke(width = strokeWidthPx),
+                    size = this.size * overValuePlacementScale,
+                    topLeft = this.center - Offset(
+                        this.size.width / 2f * (overValuePlacementScale),
+                        this.size.height / 2f * (overValuePlacementScale),
+                    ),
+                    startAngle = zero + overValueStartAngle,
+                    sweepAngle = overValueEndAngle - overValueStartAngle,
+                    useCenter = false
+                )
+                // Indicator line
                 this.drawLine(
-                    color = if(inFineSettingMode) fineLineColor else lineColor,
+                    color = lineC,
                     start = this.center,
                     end = this.center + Offset(0.0f, radius),
-                    strokeWidth = strokeWidth.toPx()
+                    strokeWidth = strokeWidthPx,
                 )
             }
         )
 
     }
 
+}
+
+private fun Float.toAngle(
+    vRange: ClosedFloatingPointRange<Float>,
+    aRange: ClosedFloatingPointRange<Float> = 0f..360f
+): Float {
+    val vRangeSize = vRange.endInclusive - vRange.start
+    val aRangeSize = aRange.endInclusive - aRange.start
+    return ((this - vRange.start) / vRangeSize) * aRangeSize + aRange.start
 }

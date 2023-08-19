@@ -17,4 +17,8 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
         inline fun <reified E : Enum<E>> Options(): Options =
             Options(enumValues<E>().map { it.name })
     }
+
+    object Decibels : ValueFormat({ String.format("%.1f dB", it) })
+
+    object AudioWaves : ValueFormat({ String.format("%.1f", it) })
 }

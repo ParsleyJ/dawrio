@@ -31,8 +31,6 @@ class LFOComponent(
     @Composable
     override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
 
-        Log.d("NOTUPDATINGRANGESBUG", "allRoutes InnerGUI: $allRoutes")
-
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

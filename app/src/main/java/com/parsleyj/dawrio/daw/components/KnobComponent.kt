@@ -43,8 +43,8 @@ class KnobComponent(
 
                 KnobWithLabel(
                     onValueChange = { element.value = it },
-                    initialValue = initialValue,
                     valueRange = range,
+                    initialValue = initialValue,
                     format = valueFormat.convertToString
                 )
             }

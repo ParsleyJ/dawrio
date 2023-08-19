@@ -21,7 +21,9 @@ import com.parsleyj.dawrio.daw.ValueFormat
 fun KnobWithLabel(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    overValueRange: ClosedFloatingPointRange<Float> = 0f..0f,
     initialValue: Float = valueRange.start,
+    overValue: Float = 0f,
     knobSize: Dp = 64.dp,
     format: (f: Float) -> String = ValueFormat.Decimal(1).convertToString
 ) {
@@ -40,6 +42,8 @@ fun KnobWithLabel(
                 value = f
                 onValueChange(f)
             },
+            overValue = overValue,
+            overValueRange = overValueRange,
         )
         Spacer(Modifier.size(8.dp))
         Text(

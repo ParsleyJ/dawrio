@@ -9,7 +9,8 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
 
     object Frequency : ValueFormat({ String.format("%.1f Hz", it) })
 
-    class Decimal(val decimals: Int) : ValueFormat({ String.format("%.${decimals}f", it) })
+    class Numeric(val decimals: Int, val signed: Boolean = true) :
+        ValueFormat({ String.format("%.${decimals}f", it) })
 
     class Options(values: List<String>) : ValueFormat({ values[it.toInt() % values.size] })
 

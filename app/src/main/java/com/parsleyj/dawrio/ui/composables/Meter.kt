@@ -25,7 +25,7 @@ fun Meter(
     outlineColor: Color = MaterialTheme.colorScheme.outline,
     showText: Boolean = false,
     orientation: Orientation = Orientation.Horizontal,
-    format: (f: Float) -> String = ValueFormat.Decimal(1).convertToString,
+    format: (f: Float) -> String = ValueFormat.Numeric(1).convertToString,
 ) {
     val rangeExtent = range.endInclusive - range.start
     val normalizedValue = if (rangeExtent == 0f) {

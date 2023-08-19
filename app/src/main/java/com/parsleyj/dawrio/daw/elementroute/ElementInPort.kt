@@ -7,7 +7,7 @@ class ElementInPort(
     val element: Element,
     val portName: String,
     val portNumber: Int,
-    val streamFormat: ValueFormat = ValueFormat.Decimal(1)
+    val streamFormat: ValueFormat = ValueFormat.Numeric(1)
 ) {
     fun connectionTo(outPort: ElementOutPort): Route {
         return Route(outPort, this)

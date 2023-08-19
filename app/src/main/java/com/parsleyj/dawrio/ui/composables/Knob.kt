@@ -26,6 +26,7 @@ fun Knob(
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     angleRange: ClosedFloatingPointRange<Float> = 25f..335f,
+    special:Boolean = false,
     overValue: Float = 0f,
     overValueRange: ClosedFloatingPointRange<Float> = 0f..0f,
     overValuePlacementScale: Float = 0.7f,
@@ -118,48 +119,56 @@ fun Knob(
                     useCenter = true,
                 )
 
-                //Over value sweep
-                this.drawArc(
-                    color = overValueSweepColor,
-                    startAngle = zero,
-                    sweepAngle = overValueAngle,
-                    size = this.size * overValuePlacementScale,
-                    topLeft = this.center - Offset(
-                        this.size.width / 2f * overValuePlacementScale,
-                        this.size.height / 2f * overValuePlacementScale,
-                    ),
-                    useCenter = true
-                )
+                if(showOverValue) {
+                    //Over value sweep
+                    this.drawArc(
+                        color = overValueSweepColor,
+                        startAngle = zero,
+                        sweepAngle = overValueAngle,
+                        size = this.size * overValuePlacementScale,
+                        topLeft = this.center - Offset(
+                            this.size.width / 2f * overValuePlacementScale,
+                            this.size.height / 2f * overValuePlacementScale,
+                        ),
+                        useCenter = true
+                    )
+                }
+
                 //Outer circle
                 this.drawCircle(
                     color = lineC,
                     style = Stroke(width = strokeWidthPx),
                     radius = radius,
                 )
-                //Little point at center
-                this.drawCircle(
-                    color = lineC,
-                    radius = strokeWidthPx / 2f,
-                )
-                // Over value line for over value range
-                this.drawArc(
-                    color = overValueLineColor,
-                    style = Stroke(width = strokeWidthPx),
-                    size = this.size * overValuePlacementScale,
-                    topLeft = this.center - Offset(
-                        this.size.width / 2f * (overValuePlacementScale),
-                        this.size.height / 2f * (overValuePlacementScale),
-                    ),
-                    startAngle = zero + overValueStartAngle,
-                    sweepAngle = overValueEndAngle - overValueStartAngle,
-                    useCenter = false
-                )
+
+
+                if(showOverValue) {
+                    // Over value line for over value range
+                    this.drawArc(
+                        color = overValueLineColor,
+                        style = Stroke(width = strokeWidthPx),
+                        size = this.size * overValuePlacementScale,
+                        topLeft = this.center - Offset(
+                            this.size.width / 2f * (overValuePlacementScale),
+                            this.size.height / 2f * (overValuePlacementScale),
+                        ),
+                        startAngle = zero + overValueStartAngle,
+                        sweepAngle = overValueEndAngle - overValueStartAngle,
+                        useCenter = false
+                    )
+                }
                 // Indicator line
                 this.drawLine(
                     color = lineC,
                     start = this.center,
                     end = this.center + Offset(0.0f, radius),
                     strokeWidth = strokeWidthPx,
+                )
+
+                //Little point at center
+                this.drawCircle(
+                    color = if(special) overValueLineColor else lineC,
+                    radius = strokeWidthPx*1.5f,
                 )
             }
         )

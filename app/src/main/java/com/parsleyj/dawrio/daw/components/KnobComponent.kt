@@ -29,7 +29,7 @@ class KnobComponent(
         val valueFormat = if (inPorts.size == 1) {
             inPorts[0].streamFormat
         } else {
-            ValueFormat.Decimal(1)
+            ValueFormat.Numeric(1)
         }
 
         Box(
@@ -40,7 +40,10 @@ class KnobComponent(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(8.dp),
             ) {
-
+                //TODO add detail dialog allowing to:
+                // - select source (if possible)
+                // - define range
+                // - write value
                 KnobWithLabel(
                     onValueChange = { element.value = it },
                     valueRange = range,

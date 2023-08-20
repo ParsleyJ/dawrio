@@ -1,14 +1,8 @@
 package com.parsleyj.dawrio.daw.element
 
-import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
-fun Voice.VoiceUpdater.constEmitter(
-    initialValue: Float,
-    label: String,
-    description: String = "",
-):ConstEmitter = addElement(ConstEmitter(initialValue, label, description))
 
 class ConstEmitter(
     initialValue: Float,
@@ -20,9 +14,9 @@ class ConstEmitter(
         get() = listOf()
 
     override val allOutputs: List<ElementOutPort>
-        get() = listOf(outPort)
+        get() = listOf(outValue)
 
-    val outPort: ElementOutPort
+    val outValue: ElementOutPort
         get() = ElementOutPort(this, "constant", 0)
 
     var value: Float

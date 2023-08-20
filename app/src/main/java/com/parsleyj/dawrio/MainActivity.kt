@@ -76,9 +76,8 @@ class MainActivity : ComponentActivity() {
         val viewModel: VoiceViewModel by viewModels()
 
         val playing by viewModel.playing.collectAsStateWithLifecycle()
-        val components by viewModel.components.collectAsStateWithLifecycle()
-        val elements by viewModel.elements.collectAsStateWithLifecycle()
-        val routes by viewModel.routes.collectAsStateWithLifecycle()
+        val devices by viewModel.devices.collectAsStateWithLifecycle()
+        val connections by viewModel.connections.collectAsStateWithLifecycle()
 
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -96,8 +95,8 @@ class MainActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier.verticalScroll(scrollState)
                     ) {
-                        for (comp in components) {
-                            comp.ComponentGUI(elements, routes, viewModel::pushRouteChange)
+                        for (dev in devices) {
+                            dev.DeviceGUI(devices, connections, viewModel::pushConnectionChange)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -111,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = 100.dp
+                        defaultElevation = 30.dp
                     )
 
                 ) {
@@ -119,7 +118,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.End
                     ) {
                         PushGateButton(
                             onStartPush = {},

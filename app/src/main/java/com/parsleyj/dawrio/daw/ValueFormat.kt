@@ -1,6 +1,11 @@
 package com.parsleyj.dawrio.daw
 
-sealed class ValueFormat(val convertToString: (v: Float) -> String) {
+sealed class ValueFormat(
+    val convertToString: (v: Float) -> String,
+    val isSigned: Boolean = false,
+) {
+
+
     class Percent(min: Float, max: Float) : ValueFormat({
         val range = min..max
         val rangeExtent = range.endInclusive - range.start
@@ -9,8 +14,9 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
 
     object Frequency : ValueFormat({ String.format("%.1f Hz", it) })
 
-    class Numeric(val decimals: Int, val signed: Boolean = true) :
-        ValueFormat({ String.format("%.${decimals}f", it) })
+    class NumericWithDecimals(val decimals: Int, signed: Boolean = true) :
+        ValueFormat({ String.format("%.${decimals}f", it) }, isSigned = signed)
+
 
     class Options(values: List<String>) : ValueFormat({ values[it.toInt() % values.size] })
 
@@ -21,5 +27,5 @@ sealed class ValueFormat(val convertToString: (v: Float) -> String) {
 
     object Decibels : ValueFormat({ String.format("%.1f dB", it) })
 
-    object AudioWaves : ValueFormat({ String.format("%.1f", it) })
+    object AudioSamples : ValueFormat({ String.format("%.1f", it) })
 }

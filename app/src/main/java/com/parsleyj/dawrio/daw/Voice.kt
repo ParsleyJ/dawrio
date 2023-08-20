@@ -1,12 +1,13 @@
 package com.parsleyj.dawrio.daw
 
-import android.util.Log
-import com.parsleyj.dawrio.daw.element.Element
+import com.parsleyj.dawrio.daw.device.Connection
+import com.parsleyj.dawrio.daw.device.Device
+import com.parsleyj.dawrio.daw.device.DeviceInput
+import com.parsleyj.dawrio.daw.device.DeviceOutput
 import com.parsleyj.dawrio.daw.element.ElementHandle
-import com.parsleyj.dawrio.daw.elementroute.ElementInPort
-import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.daw.elementroute.RouteHandle
+import java.util.UUID
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -16,15 +17,20 @@ value class VoiceHandle(val toAddress: Long)
 
 class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
+    private val _devices: MutableList<Device> = mutableListOf()
+    val devices: List<Device> get() = _devices
 
-    private val elementsPrivate: MutableMap<ElementHandle, Element> = mutableMapOf()
-    val elements: List<Element>
-        get() = elementsPrivate.values.toList()
+    private val _customConnections: MutableMap<UUID, Connection> = mutableMapOf()
+    val customConnections: Map<UUID, Connection> = _customConnections
 
+    val connectionsList: List<Connection> get() = customConnections.values.toList()
 
-    private val routesPrivate: MutableMap<RouteHandle, Route> = mutableMapOf()
-    val routes: List<Route>
-        get() = routesPrivate.values.toList()
+    val allRoutes: List<Route>
+        get() = _customConnections.values.flatMap { it.routes } +
+                devices.flatMap { it.internalRoutes }
+
+    private val routesTrashBin = mutableListOf<RouteHandle>()
+    private val elementsTrashBin = mutableListOf<ElementHandle>()
 
     fun start() {
         startVoice(handle.toAddress)
@@ -38,84 +44,96 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         destroyVoice(handle.toAddress)
     }
 
-    private fun setRouteWithoutUpdating(route: Route) {
-        val routesForSameInput = this.routes.filter { it.inPort == route.inPort }
-        routesForSameInput.map { it.handle }.forEach { this.routesPrivate.remove(it) }
-        //TODO: destroy prev when commit
-        this.routesPrivate[route.handle] = route
+
+    private fun addCustomConnectionWithoutCommit(connection: Connection) {
+        //only one connection for each input
+        val incompatible = _customConnections.values.filter { it.to.id == connection.to.id }
+        incompatible.forEach { deleteCustomConnectionWithoutCommit(it) }
+
+
+        _customConnections[connection.id] = connection //There are no new routes!
     }
 
-    private fun setElementWithoutUpdating(element: Element) {
-        this.elementsPrivate[element.handle] = element
-    }
-
-    fun addElement(dev: Element) {
-        setElementWithoutUpdating(dev)
-        commitNativeLayout()
-    }
-
-    fun addRoute(route: Route) {
-        setRouteWithoutUpdating(route)
-        commitNativeLayout()
-    }
-
-    fun removeElement(el: Element) {
-        removeElement(el.handle)
-        commitNativeLayout()
-    }
-
-    fun removeElement(handle: ElementHandle) {
-        this.elementsPrivate.remove(handle)
-        commitNativeLayout()
-    }
-
-    fun removeRoute(dev: Route) {
-        removeRoute(dev.handle)
-        commitNativeLayout()
-    }
-
-    fun removeRoute(handle: RouteHandle) {
-        this.routesPrivate.remove(handle)
-        commitNativeLayout()
+    private fun deleteCustomConnectionWithoutCommit(connection: Connection) {
+        val old = _customConnections.remove(connection.id)
+        old?.routes?.map { it.handle }?.let { routesTrashBin.addAll(it) }
     }
 
 
-    interface VoiceUpdater {
-        val voice: Voice
-        fun ElementInPort.connect(outPort: ElementOutPort): Route
-        fun ElementOutPort.connect(inPort: ElementInPort): Route
-        fun <T : Element> addElement(element: T): T
+    private fun addDeviceWithoutCommit(device: Device, position: Int = -1) {
+
+        val safePosition = if (position < 0 || position >= devices.size) {
+            devices.size
+        } else {
+            position
+        }
+
+        if (safePosition >= devices.size) {
+            _devices.add(device)
+        } else {
+            _devices.add(safePosition, device)
+        }
+    }
+
+    private fun deleteDeviceWithoutCommit(device: Device) {
+        elementsTrashBin.addAll(device.allElements.map { it.handle })
+        routesTrashBin.addAll(device.internalRoutes.map { it.handle })
+        _devices.removeIf { device.id == it.id }
+    }
+
+    private fun moveDeviceWithoutCommit(from: Int, to: Int) {
+        val removed = _devices.removeAt(from)
+        _devices.add(to, removed)
     }
 
 
-    fun edit(block: VoiceUpdater.() -> Unit): Voice {
+    inner class VoiceEditingScope {
+        fun <T : Device> addDevice(position: Int = -1, getDevice: () -> T): T {
+            val device = getDevice()
+            addDeviceWithoutCommit(device, position)
+            return device
+        }
+
+        fun DeviceOutput.connectTo(input: DeviceInput): Connection? {
+            val connection = input.buildConnection(this)
+            connection?.let { addCustomConnectionWithoutCommit(it) }
+            return connection
+        }
+
+        fun DeviceInput.connectTo(output: DeviceOutput): Connection? {
+            return output.connectTo(this)
+        }
+
+        fun updateConnection(source: DeviceOutput?, sink: DeviceInput) {
+            if (source == null) {
+                sink.findConnection(customConnections.values.toList())?.let {
+                    deleteCustomConnectionWithoutCommit(it)
+                }
+                return
+            }
+
+            val newConnection = sink.buildConnection(source)
+            newConnection?.let {
+                addCustomConnectionWithoutCommit(it)
+            }
+        }
+
+        fun moveDevice(from: Int, to: Int) {
+            moveDeviceWithoutCommit(from, to)
+        }
+
+        fun deleteDevice(device: Device) {
+            deleteDeviceWithoutCommit(device)
+        }
+
+    }
+
+
+    fun edit(block: VoiceEditingScope.() -> Unit): Voice {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
-        val builder = object : VoiceUpdater {
-            override val voice: Voice
-                get() = this@Voice
-
-            override fun ElementInPort.connect(outPort: ElementOutPort): Route {
-                val result = this.connectionTo(outPort)
-                setRouteWithoutUpdating(result)
-                return result
-            }
-
-            override fun ElementOutPort.connect(inPort: ElementInPort): Route {
-                val result = this.connectionTo(inPort)
-                setRouteWithoutUpdating(result)
-                return result
-            }
-
-            override fun <T : Element> addElement(element: T): T {
-                setElementWithoutUpdating(element)
-                return element
-            }
-
-
-        }
-        block(builder)
+        block(VoiceEditingScope())
         commitNativeLayout()
         return this
     }
@@ -124,26 +142,14 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     private fun commitNativeLayout() {
         updateNativeLayout(
             handle.toAddress,
-            elements.map { it.handle.toAddress }.toLongArray(),
-            routes.map { it.handle.toAddress }.toLongArray(),
-            if (elements.isEmpty()) 0L else elements.last().handle.toAddress
+            devices.flatMap { it.allElements }.map { it.handle.toAddress }.toLongArray(),
+            allRoutes.map { it.handle.toAddress }.toLongArray(),
+            devices.lastOrNull()?.mainAudioOutputElement?.handle?.toAddress ?: 0L
         )
+//        routesTrashBin.forEach { destroyRoute(it.toAddress) }
+//        elementsTrashBin.forEach { destroyElement(it.toAddress) }
     }
 
-    fun updateRoute(source: ElementOutPort?, input: ElementInPort) {
-        Log.d("VoiceKt", "updateRoute: $source -> $input")
-        if (source == null) {
-            input.findRoute(routes)?.let {
-                routesPrivate.remove(it.handle) ?.let { itRoute->
-                    Log.d("VoiceKt", "updateRoute: removed - $itRoute")
-                }
-            }
-        } else {
-            val newRoute = source.connectionTo(input)
-            setRouteWithoutUpdating(newRoute)
-        }
-        commitNativeLayout()
-    }
 
     companion object {
         private external fun createVoice(): Long
@@ -161,5 +167,8 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
             routes: LongArray,
             outElement: Long
         )
+
+        private external fun destroyRoute(addr: Long)
+        private external fun destroyElement(addr: Long)
     }
 }

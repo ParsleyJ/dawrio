@@ -5,10 +5,6 @@ import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
-fun Voice.VoiceUpdater.squareOsc(
-    label: String,
-    description: String = "",
-):SquareOsc = addElement(SquareOsc(label, description))
 
 class SquareOsc(
     label: String,

@@ -25,7 +25,6 @@ fun <T> refreshingState(
             emit(Unit)
         }
     }
-
     val valueFlow = MutableSharedFlow<T>()
 
     LaunchedEffect(read, active, fps) {

@@ -1,7 +1,10 @@
 package com.parsleyj.dawrio.util
 
 object NameGenerator {
-    //TODO better implementation that takes into account only used names
-    private var counter = 0
-    fun newName(startingWith: String):String = "$startingWith${counter++}"
+    private val counters: MutableMap<String, Int> = mutableMapOf()
+    fun newName(startingWith: String): String {
+        val next = counters[startingWith] ?: 0
+        counters[startingWith] = next + 1
+        return "${startingWith}_${next}"
+    }
 }

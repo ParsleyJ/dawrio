@@ -177,3 +177,15 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutElement(JNIEnv *env, job
                                                                 jlong addr) {
     return reinterpret_cast<jlong>(reinterpret_cast<Voice *>(addr)->getOutDevice());
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyRoute(JNIEnv *env, jobject thiz,
+                                                               jlong addr) {
+    delete reinterpret_cast<Route *>(addr);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyElement(JNIEnv *env, jobject thiz,
+                                                                 jlong addr) {
+    delete reinterpret_cast<Route *>(addr);
+}

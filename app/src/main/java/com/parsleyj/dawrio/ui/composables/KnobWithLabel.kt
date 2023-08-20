@@ -20,12 +20,17 @@ import com.parsleyj.dawrio.daw.ValueFormat
 @Composable
 fun KnobWithLabel(
     onValueChange: (Float) -> Unit,
+    onOverValueScaleChange: (Float) -> Unit = {},
+    onClick: () -> Unit = {},
+    headerText: String = "",
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    overValueRange: ClosedFloatingPointRange<Float> = 0f..0f,
+    overValueRangeEnd: Float = 0f,
+    showOverValue: Boolean = false,
     initialValue: Float = valueRange.start,
     overValue: Float = 0f,
     knobSize: Dp = 64.dp,
-    format: (f: Float) -> String = ValueFormat.Numeric(1).convertToString
+    centerIndicator: Boolean = false,
+    format: (f: Float) -> String = ValueFormat.NumericWithDecimals(1).convertToString
 ) {
     var value by remember { mutableStateOf(initialValue) }
     var text by remember(value, format) { mutableStateOf(format(value)) }
@@ -34,8 +39,11 @@ fun KnobWithLabel(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(8.dp)
     ) {
+        Text(text = headerText, textAlign = TextAlign.Center)
+        Spacer(Modifier.size(8.dp))
         Knob(
             modifier = Modifier.size(knobSize),
+            initialValue = initialValue,
             valueRange = valueRange,
             onValueChange = { f ->
                 text = format(f)
@@ -43,7 +51,11 @@ fun KnobWithLabel(
                 onValueChange(f)
             },
             overValue = overValue,
-            overValueRange = overValueRange,
+            initialOverValueRangeEnd = overValueRangeEnd,
+            showOverValue = showOverValue,
+            onOverValueScaleChange = onOverValueScaleChange,
+            onClick = onClick,
+            special = centerIndicator
         )
         Spacer(Modifier.size(8.dp))
         Text(

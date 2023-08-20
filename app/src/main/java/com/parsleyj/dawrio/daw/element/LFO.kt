@@ -5,13 +5,8 @@ import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
-fun Voice.VoiceUpdater.lfo(
-    label: String,
-    description: String = "",
-):LFO = addElement(LFO(label, description))
-
 enum class LFOWaveTypes{
-    Sin, SawUp, SawDown, Square //Change in LFO.h too!
+    Sin, SawUp, SawDown, Square //Match with enum in LFO.h!
 }
 
 class LFO(
@@ -19,6 +14,8 @@ class LFO(
     description: String = "",
     handle: ElementHandle = ElementHandle(createLFO()),
 ) : Element(label, description, handle) {
+
+
 
     override val allInputs: List<ElementInPort>
         get() = listOf(inFrequency, inType, inMinimum, inMaximum)

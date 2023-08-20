@@ -11,8 +11,8 @@ class VolumeMeter(
     handle: ElementHandle = ElementHandle(createVolumeMeter(bufferSize))
 ) : Element(label, description, handle) {
 
-    val inAudioL = ElementInPort(this, "inAudioL", 0, ValueFormat.AudioWaves)
-    val inAudioR = ElementInPort(this, "inAudioR", 1, ValueFormat.AudioWaves)
+    val inAudioL = ElementInPort(this, "inAudioL", 0, ValueFormat.AudioSamples)
+    val inAudioR = ElementInPort(this, "inAudioR", 1, ValueFormat.AudioSamples)
     val outDecibelsL = ElementOutPort(this, "outDecibelsL", 0)
     val outDecibelsR = ElementOutPort(this, "outDecibelsR", 1)
 

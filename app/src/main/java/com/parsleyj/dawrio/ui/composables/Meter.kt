@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -25,7 +26,7 @@ fun Meter(
     outlineColor: Color = MaterialTheme.colorScheme.outline,
     showText: Boolean = false,
     orientation: Orientation = Orientation.Horizontal,
-    format: (f: Float) -> String = ValueFormat.Numeric(1).convertToString,
+    format: (f: Float) -> String = ValueFormat.NumericWithDecimals(1).convertToString,
 ) {
     val rangeExtent = range.endInclusive - range.start
     val normalizedValue = if (rangeExtent == 0f) {
@@ -41,13 +42,18 @@ fun Meter(
     }
     val changeFactorY = when (orientation) {
         Orientation.Horizontal -> 1f
-        Orientation.Vertical -> normalizedValue
+        Orientation.Vertical -> -normalizedValue
     }
+
 
 
 
     Box(contentAlignment = Alignment.Center) {
         Canvas(modifier = modifier, onDraw = {
+            val topLeft: Offset = when (orientation) {
+                Orientation.Horizontal -> Offset.Zero
+                Orientation.Vertical -> Offset(0.0f, this.size.height)
+            }
             val cornerRadius = CornerRadius(2.dp.toPx())
             this.drawRoundRect(
                 color = bgColor,
@@ -57,7 +63,11 @@ fun Meter(
             if (normalizedValue != 0f) {
                 this.drawRect(
                     color = meterColor,
-                    size = Size(this.size.width * changeFactorX, this.size.height * changeFactorY),
+                    topLeft = topLeft,
+                    size = Size(
+                        this.size.width * changeFactorX,
+                        this.size.height * changeFactorY
+                    ),
                 )
             }
             this.drawRoundRect(
@@ -67,9 +77,9 @@ fun Meter(
                 cornerRadius = cornerRadius,
             )
         })
-        if(showText){
+        if (showText) {
             Text(
-                text=format(value),
+                text = format(value),
                 style = MaterialTheme.typography.labelSmall,
                 color = outlineColor
             )

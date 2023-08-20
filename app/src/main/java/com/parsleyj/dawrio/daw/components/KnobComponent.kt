@@ -25,11 +25,11 @@ class KnobComponent(
 
     @Composable
     override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {
-        val inPorts = element.outPort.findRoutes(allRoutes).map { it.inPort }
+        val inPorts = element.outValue.findRoutes(allRoutes).map { it.inPort }
         val valueFormat = if (inPorts.size == 1) {
             inPorts[0].streamFormat
         } else {
-            ValueFormat.Numeric(1)
+            ValueFormat.NumericWithDecimals(1)
         }
 
         Box(
@@ -46,6 +46,7 @@ class KnobComponent(
                 // - write value
                 KnobWithLabel(
                     onValueChange = { element.value = it },
+                    onOverValueScaleChange = {},
                     valueRange = range,
                     initialValue = initialValue,
                     format = valueFormat.convertToString

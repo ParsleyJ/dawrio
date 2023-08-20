@@ -4,11 +4,6 @@ import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
-fun Voice.VoiceUpdater.volume(
-    initialAmount: Float,
-    label: String,
-    description: String = "",
-):Volume = addElement(Volume(initialAmount, label, description))
 
 class Volume(
     initialAmount: Float,

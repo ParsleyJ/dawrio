@@ -50,10 +50,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
+import com.parsleyj.dawrio.daw.device.Device
+import com.parsleyj.dawrio.daw.device.DeviceInput
+import com.parsleyj.dawrio.daw.device.DeviceOutput
 import com.parsleyj.dawrio.daw.element.Element
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 import com.parsleyj.dawrio.daw.elementroute.Route
+
 
 
 @Composable
@@ -78,9 +82,9 @@ fun ElementCard(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        DeviceCardHeader(headerHeight, imageVector, deviceName)
+        ElementCardHeader(headerHeight, imageVector, deviceName)
         if (inputs.isNotEmpty()) {
-            DeviceCardInputSection(element, allElements, allRoutes, inputsHeight, onSetRoute)
+            ElementCardInputSection(element, allElements, allRoutes, inputsHeight, onSetRoute)
             Divider(color = MaterialTheme.colorScheme.outline)
         }
 
@@ -88,14 +92,14 @@ fun ElementCard(
 
         if (outputs.isNotEmpty()) {
             Divider(color = MaterialTheme.colorScheme.outline)
-            DeviceCardOutputSection(element, allRoutes, outputsHeight)
+            ElementCardOutputSection(element, allRoutes, outputsHeight)
         }
     }
 
 }
 
 @Composable
-private fun DeviceCardHeader(
+private fun ElementCardHeader(
     headerHeight: Dp,
     imageVector: ImageVector,
     elementName: String
@@ -142,7 +146,7 @@ private fun DeviceCardHeader(
 }
 
 @Composable
-private fun DeviceCardInputSection(
+private fun ElementCardInputSection(
     element: Element,
     allElements: List<Element>,
     allRoutes: List<Route>,
@@ -176,7 +180,7 @@ private fun DeviceCardInputSection(
                     val routeIn = input.findRoute(allRoutes)
                     val hasRouteIn = routeIn != null
                     if (showDialog) {
-                        SelectSourceDialog(
+                        ElementSelectSourceDialog(
                             elements = otherDevices,
                             elementInPort = input,
                             selected = routeIn?.outPort,
@@ -225,7 +229,7 @@ private fun DeviceCardInputSection(
 
 
 @Composable
-private fun DeviceCardOutputSection(
+private fun ElementCardOutputSection(
     element: Element,
     allRoutes: List<Route>,
     outputsHeight: Dp,
@@ -276,7 +280,7 @@ private fun DeviceCardOutputSection(
 
 
 @Composable
-fun SelectSourceDialog(
+fun ElementSelectSourceDialog(
     elements: List<Element>,
     elementInPort: ElementInPort,
     selected: ElementOutPort?,

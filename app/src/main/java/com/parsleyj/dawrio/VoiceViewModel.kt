@@ -1,69 +1,81 @@
 package com.parsleyj.dawrio
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.parsleyj.dawrio.daw.components.Component
-import com.parsleyj.dawrio.daw.element.Element
-import com.parsleyj.dawrio.daw.element.ElementHandle
-import com.parsleyj.dawrio.daw.elementroute.ElementInPort
-import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
-import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.daw.Voice
+import com.parsleyj.dawrio.daw.device.Connection
+import com.parsleyj.dawrio.daw.device.Device
+import com.parsleyj.dawrio.daw.device.DeviceInput
+import com.parsleyj.dawrio.daw.device.DeviceOutput
+import com.parsleyj.dawrio.daw.device.SawOSCDevice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
+import java.util.UUID
 
 class VoiceViewModel : ViewModel() {
+    val voice: Voice
 
-    //TODO change
-    val privatePair = Engine.createAndSetVoice()
-    val voice: Voice = privatePair.first
+    init {
+        Engine.initialize()
+        voice = Engine.testVoice!!
+    }
 
 
-    private val _elements = MutableStateFlow(listOf<Element>())
-    val elements: StateFlow<List<Element>> = _elements.asStateFlow()
+    private val _devices = MutableStateFlow(listOf<Device>())
+    val devices = _devices.asStateFlow()
 
-    private val _routes = MutableStateFlow(listOf<Route>())
-    val routes: StateFlow<List<Route>> = _routes.asStateFlow()
+    private val _connections = MutableStateFlow(listOf<Connection>())
+    val connections = _connections.asStateFlow()
 
     private val _playing = MutableStateFlow(false)
     val playing: StateFlow<Boolean> = _playing
 
-    private val _components = MutableStateFlow(listOf<Component>())
-    val components: StateFlow<List<Component>> = _components
 
     init {
-        _elements.update {
-            voice.elements
-        }
-        _routes.update {
-            voice.routes
-        }
-        _components.update {
-            //TODO change
-            privatePair.second
-        }
+        _devices.update { voice.devices }
+        _connections.update { voice.connectionsList }
     }
 
     fun setPlaying(playing: Boolean) {
+
+        //TODO clean all Log.d's
+        Log.d("Sound", "===========================================")
+        Log.d("Sound", "devices(${voice.devices.size})=${voice.devices}")
+        Log.d("Sound", "connections(${voice.connectionsList.size})=${voice.connectionsList}")
+        val allElements = voice.devices.flatMap { it.allElements }
+        Log.d("Sound", "elements(${allElements.size})=$allElements")
+        Log.d("Sound", "routes(${voice.allRoutes.size})=${voice.allRoutes}")
+
+
+
         _playing.update {
             Engine.beepEvent(playing)
+            if(playing){
+                voice.start()
+            }else{
+                voice.stop()
+            }
             playing
         }
     }
 
-    fun pushRouteChange(input: ElementInPort, output: ElementOutPort?) {
-        _routes.update {
-            voice.updateRoute(output, input)
-            voice.routes
+    fun pushConnectionChange(input: DeviceInput, output: DeviceOutput?) {
+        _connections.update {
+            voice.edit {
+                updateConnection(output, input)
+            }
+            voice.connectionsList
         }
     }
 
-    inline fun <reified T: Element> getElement(handle: ElementHandle): Flow<T?> {
-        return elements.transform { list ->
-            (list.find { it.handle == handle } as? T)?.let { emit(it) } ?: emit(null)
+
+    inline fun <reified T : Device> getDevice(deviceUUID: UUID): Flow<T?> {
+        return devices.transform { list ->
+            (list.find { it.id == deviceUUID } as? T)?.let { emit(it) } ?: emit(null)
         }
     }
 }

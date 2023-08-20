@@ -1,14 +1,9 @@
 package com.parsleyj.dawrio.daw.element
 
 import com.parsleyj.dawrio.daw.ValueFormat
-import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
-fun Voice.VoiceUpdater.sawOsc(
-    label: String,
-    description: String = "",
-):SawOsc = addElement(SawOsc(label, description))
 
 class SawOsc internal constructor(
     label:String,

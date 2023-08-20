@@ -7,7 +7,7 @@ class ElementOutPort(
     val element: Element,
     val portName: String,
     val portNumber: Int,
-    val valueFormat: ValueFormat = ValueFormat.Numeric(1)
+    val valueFormat: ValueFormat = ValueFormat.NumericWithDecimals(1)
 ) {
     fun readValue(): Float {
         return Element.readElementOutput(element.handle.toAddress, portNumber)

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +21,7 @@ import com.parsleyj.dawrio.ui.composables.ModulationAcceptingKnob
 import com.parsleyj.dawrio.util.size
 
 
-class SawOSCDevice : Device("SawOSC") {
+class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
     private val frequencyRange: ClosedFloatingPointRange<Float> = 20f..1_760f
     private val frequencyInitialValue: Float = 440f
 

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +33,7 @@ import com.parsleyj.dawrio.util.size
 import com.parsleyj.dawrio.util.toFloatRange
 
 
-class LFODevice : Device("LFO") {
+class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
     private val frequencyRange: ClosedFloatingPointRange<Float> = 0f..20f
     private val frequencyInitialValue: Float = 1f
 
@@ -126,6 +128,7 @@ class LFODevice : Device("LFO") {
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit
     ) {
+
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
@@ -145,7 +148,7 @@ class LFODevice : Device("LFO") {
                     valueFormat = ValueFormat.Frequency,
 
                     onValueChange = { freqKnobElement.value = it },
-                    onModScaleChange = { freqModScale = it*frequencyRange.size },
+                    onModScaleChange = { freqModScale = it * frequencyRange.size },
                     refreshingOvervalue = { freqModAdder.outValue.readValue() },
                     onConnectChangeRequest = { onConnectChangeRequest(freqModInput, it) }
                 )
@@ -169,7 +172,7 @@ class LFODevice : Device("LFO") {
                     valueFormat = ValueFormat.NumericWithDecimals(1),
                     onValueChange = { maxValueKnobElement.value = it },
                     refreshingOvervalue = { maxValueModAdder.outValue.readValue() },
-                    onModScaleChange = { maxValueModScale = it*maxValueRange.size },
+                    onModScaleChange = { maxValueModScale = it * maxValueRange.size },
                     onConnectChangeRequest = { onConnectChangeRequest(maxValueModInput, it) }
                 )
 

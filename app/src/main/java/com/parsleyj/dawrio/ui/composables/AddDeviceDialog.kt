@@ -1,5 +1,8 @@
 package com.parsleyj.dawrio.ui.composables
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,9 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -20,6 +25,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,24 +33,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
-import com.parsleyj.dawrio.daw.device.Device
-import com.parsleyj.dawrio.daw.device.DeviceInput
-import com.parsleyj.dawrio.daw.device.DeviceOutput
+import com.parsleyj.dawrio.daw.device.DeviceCreator
 
 @Composable
-fun ModulationDetailsDialog(
-    devices: List<Device>,
-    deviceInput: DeviceInput,
-    selected: DeviceOutput?,
-    onSelectSource: (DeviceOutput?) -> Unit,
+fun AddDeviceDialog(
+    deviceCreators: List<DeviceCreator>,
+    onSelect: (DeviceCreator) -> Unit,
     onDismiss: () -> Unit,
 ) {
-
-    val otherDevices = devices.filter { it.id != deviceInput.device.id }
-
-    var selectedOption by remember { mutableStateOf(selected) }
+    var selectedOption by remember { mutableStateOf<DeviceCreator?>(null) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -53,36 +58,20 @@ fun ModulationDetailsDialog(
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = "Select source",
+                    text = "New Device",
                     style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = "for ${deviceInput.device.label}/${deviceInput.name}",
-                    style = MaterialTheme.typography.labelMedium
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Divider(color = MaterialTheme.colorScheme.outline)
                 LazyColumn(modifier = Modifier.height(500.dp)) {
-                    item {
-                        DeviceSelectSourceDialogOption(
-                            text = "None",
-                            currentlySelected = selectedOption == null,
-                            onSelect = { selectedOption = null }
-                        )
-                    }
-                    itemsIndexed(
-                        otherDevices
-                            .flatMap { it.allOutputs }
-                            .filter { deviceInput.compatibleWith(it) }
-                    ) { _, outPort ->
-                        DeviceSelectSourceDialogOption(
-                            text = "$outPort",
-                            currentlySelected = selectedOption == outPort,
-                            onSelect = { selectedOption = outPort }
+                    itemsIndexed(deviceCreators) { _, deviceCreator ->
+                        AddDeviceDialogOption(
+                            icon = deviceCreator.icon,
+                            text = deviceCreator.name,
+                            height= 48.dp,
+                            currentlySelected = selectedOption == deviceCreator,
+                            onSelect = { selectedOption = deviceCreator }
                         )
                     }
                 }
@@ -101,10 +90,15 @@ fun ModulationDetailsDialog(
                         Text(text = "Cancel", color= LocalContentColor.current)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {
-                        onSelectSource(selectedOption)
-                        onDismiss()
-                    }) {
+                    Button(
+                        onClick = {
+                            selectedOption?.let {
+                                onSelect(it)
+                                onDismiss()
+                            }
+                        },
+                        enabled = selectedOption != null
+                    ) {
                         Text(text = "Select", color= LocalContentColor.current)
                     }
                 }
@@ -114,14 +108,17 @@ fun ModulationDetailsDialog(
 }
 
 @Composable
-fun DeviceSelectSourceDialogOption(
+fun AddDeviceDialogOption(
+    icon: ImageVector,
     text: String,
+    height: Dp,
     currentlySelected: Boolean,
     onSelect: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .clickable { onSelect() }
+            .height(height)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -129,6 +126,24 @@ fun DeviceSelectSourceDialogOption(
             selected = currentlySelected,
             onClick = { onSelect() }
         )
+        Image(
+            imageVector = icon,
+            colorFilter = ColorFilter.tint(
+                MaterialTheme.colorScheme.contentColorFor(
+                    MaterialTheme.colorScheme.background
+                )
+            ),
+            contentScale = ContentScale.Inside,
+            contentDescription = null,
+            modifier = Modifier
+                .size(.75 * height)
+                .clip(CircleShape)
+                .border(
+                    border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
+                    shape = CircleShape
+                )
+        )
+
         Text(
             text = text,
             modifier = Modifier

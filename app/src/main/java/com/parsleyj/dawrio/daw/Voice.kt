@@ -18,7 +18,7 @@ value class VoiceHandle(val toAddress: Long)
 class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
     private val _devices: MutableList<Device> = mutableListOf()
-    val devices: List<Device> get() = _devices
+    val devices: List<Device> get() = _devices.toList()
 
     private val _customConnections: MutableMap<UUID, Connection> = mutableMapOf()
     val customConnections: Map<UUID, Connection> = _customConnections
@@ -60,7 +60,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     }
 
 
-    private fun addDeviceWithoutCommit(device: Device, position: Int = -1) {
+    private fun addDeviceWithoutCommit(device: Device, position: Int = lastDevicePosition) {
 
         val safePosition = if (position < 0 || position >= devices.size) {
             devices.size
@@ -88,7 +88,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
 
     inner class VoiceEditingScope {
-        fun <T : Device> addDevice(position: Int = -1, getDevice: () -> T): T {
+        fun <T : Device> addDevice(position: Int = lastDevicePosition, getDevice: () -> T): T {
             val device = getDevice()
             addDeviceWithoutCommit(device, position)
             return device
@@ -152,6 +152,9 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
 
     companion object {
+        const val lastDevicePosition:Int = -1
+
+
         private external fun createVoice(): Long
         private external fun startVoice(address: Long)
         private external fun stopVoice(address: Long)

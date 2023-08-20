@@ -84,7 +84,7 @@ class DeviceInput(
         return allConnections.find { it.to.id == this.id }
     }
 
-    override fun toString():String = "${device.label}/$name"
+    override fun toString(): String = "${device.label}/$name"
 }
 
 class DeviceOutput(
@@ -95,7 +95,7 @@ class DeviceOutput(
     val id: UUID = UUID.randomUUID(),
     val provideOutPort: (channelIndex: Int) -> ElementOutPort,
 ) {
-    override fun toString():String = "${device.label}/$name"
+    override fun toString(): String = "${device.label}/$name"
 }
 
 abstract class Device(

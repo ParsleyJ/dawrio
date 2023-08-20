@@ -1,12 +1,7 @@
 package com.parsleyj.dawrio.ui.composables
 
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.draggable
@@ -25,7 +20,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -51,16 +45,15 @@ fun Knob(
     onValueChange: (Float) -> Unit = {},
     onOverValueScaleChange: (Float) -> Unit = {}
 ) {
-
-    val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
-
-
     val valueRangeSize = valueRange.endInclusive - valueRange.start
 
+    var value by remember() { mutableStateOf(initialValue) }
 
-    var value by remember { mutableStateOf(initialValue) }
-
-    var overValueRangeEnd by remember(initialOverValueRangeEnd) { mutableStateOf(initialOverValueRangeEnd) }
+    var overValueRangeEnd by remember(initialOverValueRangeEnd) {
+        mutableStateOf(
+            initialOverValueRangeEnd
+        )
+    }
 
     val rotation by remember {
         derivedStateOf { value.toAngle(valueRange, angleRange) }

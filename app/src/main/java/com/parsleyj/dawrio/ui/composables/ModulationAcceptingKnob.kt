@@ -25,7 +25,6 @@ fun ModulationAcceptingKnob(
     onValueChange: (Float) -> Unit,
     getModScale: () ->  Float,
     onModScaleChange: (Float)->Unit,
-    refreshingOvervalue: () -> Float,
     onConnectChangeRequest: (DeviceOutput?) -> Unit,
 ) {
 
@@ -44,20 +43,12 @@ fun ModulationAcceptingKnob(
         )
     }
 
-    //TODO enable overValue metering
-//    val overValue: State<Float> = if (connIn != null) {
-//        refreshingState(read = refreshingOvervalue)
-//    } else {
-//        remember { mutableStateOf(0f) }
-//    }
-
     KnobWithLabel(
         headerText = headerText,
         onValueChange = onValueChange,
         valueRange = valueRange,
         initialValue = initialValue,
         format = valueFormat.convertToString,
-//        overValue = overValue.value,
         overValue = 0f,
         overValueRangeEnd = getModScale(),
         showOverValue = connIn != null,

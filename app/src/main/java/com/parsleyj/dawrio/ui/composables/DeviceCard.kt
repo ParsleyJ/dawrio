@@ -13,10 +13,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +46,8 @@ fun DeviceCard(
     device: Device,
     allDevices: List<Device>,
     allConnections: List<Connection>,
-    onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit
+    onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit,
+    onDeleteRequest: () -> Unit
 ) {
 
     val headerHeight = 64.dp
@@ -49,13 +56,14 @@ fun DeviceCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         if (showHeader) {
             DeviceCardHeader(
                 headerHeight = headerHeight,
                 icon = ImageVector.vectorResource(id = device.icon),
-                deviceName = deviceName
+                deviceName = deviceName,
+                onDeleteRequest = onDeleteRequest,
             )
         }
         device.InnerGUI(allDevices, allConnections, onConnectChangeRequest)
@@ -67,11 +75,9 @@ fun DeviceCard(
 fun DeviceCardHeader(
     headerHeight: Dp,
     icon: ImageVector,
-    deviceName: String
+    deviceName: String,
+    onDeleteRequest: () -> Unit,
 ) {
-    //TODO hold and drag on header to rearrange devices
-    //TODO click on icon to options
-    //TODO long click on icon to select
     Card(
         modifier = Modifier
             .height(headerHeight)
@@ -86,24 +92,38 @@ fun DeviceCardHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val iconSize = 0.75 * headerHeight
+
+            var showDialog by remember { mutableStateOf(false) }
+
+            if (showDialog) {
+                ConfirmationDialog(
+                    text = "Delete $deviceName?",
+                    onDismiss = { showDialog = false }
+                ) {
+                    onDeleteRequest()
+                }
+            }
+
             Spacer(modifier = Modifier.width(10.dp))
-            Image(
-                imageVector = icon,
-                colorFilter = ColorFilter.tint(
-                    MaterialTheme.colorScheme.contentColorFor(
-                        MaterialTheme.colorScheme.background
-                    )
-                ),
-                contentScale = ContentScale.Inside,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(iconSize)
-                    .clip(CircleShape)
-                    .border(
-                        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
-                        shape = CircleShape
-                    )
-            )
+            IconButton(onClick = { showDialog = true }) {
+                Image(
+                    imageVector = icon,
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.contentColorFor(
+                            MaterialTheme.colorScheme.background
+                        )
+                    ),
+                    contentScale = ContentScale.Inside,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(iconSize)
+                        .clip(CircleShape)
+                        .border(
+                            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
+                            shape = CircleShape
+                        )
+                )
+            }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = deviceName,

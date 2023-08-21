@@ -139,19 +139,17 @@ class LFODevice : Device("LFO", icon = lfoIcon) {
             ) {
                 ModulationAcceptingKnob(
                     headerText = "Frequency",
-                    getModScale = { freqModScale },
                     modulationInput = freqModInput,
                     findConnection = { freqModInput.findConnection(allConnections) },
                     allDevices = allDevices,
                     initialValue = freqKnobElement.value,
                     valueRange = frequencyRange,
                     valueFormat = ValueFormat.Frequency,
-
                     onValueChange = { freqKnobElement.value = it },
-                    onModScaleChange = { freqModScale = it * frequencyRange.size },
-                    refreshingOvervalue = { freqModAdder.outValue.readValue() },
-                    onConnectChangeRequest = { onConnectChangeRequest(freqModInput, it) }
-                )
+
+                    getModScale = { freqModScale },
+                    onModScaleChange = { freqModScale = it * frequencyRange.size }
+                ) { onConnectChangeRequest(freqModInput, it) }
 
                 KnobWithLabel(
                     headerText = "Type",
@@ -163,7 +161,6 @@ class LFODevice : Device("LFO", icon = lfoIcon) {
 
                 ModulationAcceptingKnob(
                     headerText = "Max Value",
-                    getModScale = { maxValueModScale },
                     modulationInput = maxValueModInput,
                     findConnection = { maxValueModInput.findConnection(allConnections) },
                     allDevices = allDevices,
@@ -171,10 +168,9 @@ class LFODevice : Device("LFO", icon = lfoIcon) {
                     valueRange = maxValueRange,
                     valueFormat = ValueFormat.NumericWithDecimals(1),
                     onValueChange = { maxValueKnobElement.value = it },
-                    refreshingOvervalue = { maxValueModAdder.outValue.readValue() },
-                    onModScaleChange = { maxValueModScale = it * maxValueRange.size },
-                    onConnectChangeRequest = { onConnectChangeRequest(maxValueModInput, it) }
-                )
+                    getModScale = { maxValueModScale },
+                    onModScaleChange = { maxValueModScale = it * maxValueRange.size }
+                ) { onConnectChangeRequest(maxValueModInput, it) }
 
                 val outMeterValue by refreshingState(read = {
                     modulationOutput.provideOutPort(0).readValue()

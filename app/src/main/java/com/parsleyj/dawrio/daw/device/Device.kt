@@ -25,7 +25,6 @@ sealed class DeviceStreamType(vararg val channels: ChannelDescriptor) {
         ChannelDescriptor(ValueFormat.AudioSamples, "Right side")
     )
 
-    //TODO clip values between 0 and 1
     object Modulation : DeviceStreamType(
         ChannelDescriptor(ValueFormat.NumericWithDecimals(1, signed = false))
     )
@@ -48,8 +47,6 @@ class Connection(
 class DeviceInput(
     val device: Device,
     val name: String,
-    //TODO main inputs are automatically connected to
-    // main outputs of previous device in chain (if compatible)
     val isMain: Boolean,
     val type: DeviceStreamType,
     val id: UUID = UUID.randomUUID(),
@@ -126,7 +123,8 @@ abstract class Device(
         modifier: Modifier,
         allDevices: List<Device>,
         allConnections: List<Connection>,
-        onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit
+        onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit,
+        onDeleteRequest: ()->Unit
     ) {
         DeviceCard(
             modifier = modifier,
@@ -134,7 +132,8 @@ abstract class Device(
             showHeader = removable,
             allDevices = allDevices,
             allConnections = allConnections,
-            onConnectChangeRequest = onConnectChangeRequest
+            onConnectChangeRequest = onConnectChangeRequest,
+            onDeleteRequest = onDeleteRequest,
         )
     }
 

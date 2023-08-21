@@ -1,6 +1,3 @@
-//
-// Created by pj on 13/08/23.
-//
 
 #ifndef DAWRIO_AUDIOENGINE_H
 #define DAWRIO_AUDIOENGINE_H

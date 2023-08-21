@@ -68,7 +68,7 @@ class VoiceViewModel : ViewModel() {
     fun pushNewDevice(position: Int, deviceCreator: DeviceCreator) {
         _devices.update {
             voice.edit { addDevice(position, deviceCreator.create) }
-            Log.d("Updating devices", "Updated Devices: ${voice.devices.map { it.label }}")
+            Log.d("VoiceViewModel", "Added device; devices now: ${voice.devices.map { it.label }}")
             voice.devices.toList()
         }
     }
@@ -77,6 +77,15 @@ class VoiceViewModel : ViewModel() {
     inline fun <reified T : Device> getDevice(deviceUUID: UUID): Flow<T?> {
         return devices.transform { list ->
             (list.find { it.id == deviceUUID } as? T)?.let { emit(it) } ?: emit(null)
+        }
+    }
+
+    fun pushDeviceDeletion(device:Device) {
+        _devices.update {
+            voice.edit { deleteDevice(device) }
+            Log.d("VoiceViewModel", "Removed device; devices now:" +
+                    " ${voice.devices.map { it.label }}")
+            voice.devices.toList()
         }
     }
 

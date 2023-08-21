@@ -113,7 +113,6 @@ class MainOutputDevice(label: String) : Device(
                     )
                 })
 
-                //TODO stereo
                 VerticalLabeledMeter(
                     topLabel = "",
                     outMeterValue = outputStereo.first,

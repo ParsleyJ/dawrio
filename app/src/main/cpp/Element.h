@@ -1,6 +1,4 @@
-//
-// Created by pj on 13/08/23.
-//
+
 
 #ifndef DAWRIO_ELEMENT_H
 #define DAWRIO_ELEMENT_H

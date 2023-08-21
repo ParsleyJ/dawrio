@@ -1,6 +1,4 @@
-//
-// Created by pj on 14/08/23.
-//
+
 
 #ifndef DAWRIO_CONSTEMITTER_H
 #define DAWRIO_CONSTEMITTER_H

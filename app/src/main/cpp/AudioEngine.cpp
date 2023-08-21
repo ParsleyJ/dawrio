@@ -36,7 +36,7 @@ bool AudioEngine::start() {
     AAudioStreamBuilder *streamBuilder;
     AAudio_createStreamBuilder(&streamBuilder);
     AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
-    AAudioStreamBuilder_setChannelCount(streamBuilder, 1); //TODO stereoAudio
+    AAudioStreamBuilder_setChannelCount(streamBuilder, 1);
     AAudioStreamBuilder_setPerformanceMode(streamBuilder, AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
     AAudioStreamBuilder_setDataCallback(streamBuilder, ::dataCallback, voice_.load());
     AAudioStreamBuilder_setErrorCallback(streamBuilder, ::errorCallback, this);

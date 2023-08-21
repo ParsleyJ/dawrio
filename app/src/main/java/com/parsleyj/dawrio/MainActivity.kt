@@ -46,15 +46,7 @@ import java.util.UUID
 
 class MainActivity : ComponentActivity() {
 
-    /* TODO
-        - Mixer
-        - Envelope
-        - Manual Gate
-        - Group
-        - Clock
-        - Visual Feedback
-        - Haptic Feedback
-     */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,10 +67,11 @@ class MainActivity : ComponentActivity() {
                         deviceMap.getOrPut(dev.id) {
                             movableContentOf { modifier: Modifier ->
                                 dev.DeviceGUI(
-                                    modifier,
-                                    devices,
-                                    connections,
-                                    viewModel::pushConnectionChange
+                                    modifier = modifier,
+                                    allDevices = devices,
+                                    allConnections = connections,
+                                    onConnectChangeRequest = viewModel::pushConnectionChange,
+                                    onDeleteRequest = { viewModel.pushDeviceDeletion(dev) }
                                 )
                             }
                         }
@@ -99,7 +92,9 @@ class MainActivity : ComponentActivity() {
                             contentAlignment = Alignment.BottomCenter,
                         ) {
                             LazyColumn(
-                                modifier = Modifier.fillMaxWidth().animateContentSize(tween(600)),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateContentSize(tween(600)),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Bottom
                             ) {

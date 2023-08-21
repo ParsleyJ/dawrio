@@ -120,7 +120,6 @@ class SawOSCDevice : Device("SawOSC", icon = sawOSCIcon) {
             ) {
                 ModulationAcceptingKnob(
                     headerText = "Frequency",
-                    getModScale = { freqModScale },
                     modulationInput = freqModInput,
                     findConnection = { freqModInput.findConnection(allConnections) },
                     allDevices = allDevices,
@@ -128,14 +127,12 @@ class SawOSCDevice : Device("SawOSC", icon = sawOSCIcon) {
                     valueRange = frequencyRange,
                     valueFormat = ValueFormat.Frequency,
                     onValueChange = { freqKnobElement.value = it },
-                    refreshingOvervalue = { freqModAdder.outValue.readValue() },
-                    onModScaleChange = { freqModScale = it * frequencyRange.size },
-                    onConnectChangeRequest = { onConnectChangeRequest(freqModInput, it) }
-                )
+                    getModScale = { freqModScale },
+                    onModScaleChange = { freqModScale = it * frequencyRange.size }
+                ) { onConnectChangeRequest(freqModInput, it) }
 
                 ModulationAcceptingKnob(
                     headerText = "Volume",
-                    getModScale = { volumeModScale },
                     modulationInput = volumeModInput,
                     findConnection = { volumeModInput.findConnection(allConnections) },
                     allDevices = allDevices,
@@ -143,10 +140,9 @@ class SawOSCDevice : Device("SawOSC", icon = sawOSCIcon) {
                     valueRange = volumeRange,
                     valueFormat = ValueFormat.NumericWithDecimals(1),
                     onValueChange = { volumeKnobElement.value = it },
-                    refreshingOvervalue = { volumeModAdder.outValue.readValue() },
-                    onModScaleChange = { volumeModScale = it * volumeRange.size },
-                    onConnectChangeRequest = { onConnectChangeRequest(volumeModInput, it) }
-                )
+                    getModScale = { volumeModScale },
+                    onModScaleChange = { volumeModScale = it * volumeRange.size }
+                ) { onConnectChangeRequest(volumeModInput, it) }
             }
         }
     }

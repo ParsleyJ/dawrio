@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,11 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalContentColor
@@ -33,12 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.parsleyj.dawrio.Engine.stopEngine
-import com.parsleyj.dawrio.daw.Voice
-import com.parsleyj.dawrio.daw.device.Device
 import com.parsleyj.dawrio.ui.composables.AddDeviceButton
 import com.parsleyj.dawrio.ui.composables.PushGateButton
 import com.parsleyj.dawrio.ui.theme.DawrioTheme
@@ -66,12 +66,32 @@ class MainActivity : ComponentActivity() {
                 val connections by viewModel.connections.collectAsStateWithLifecycle()
 
 
+                val deviceMap = remember(devices) {
+                    mutableMapOf<UUID, @Composable (Modifier) -> Unit>()
+                }
+
+                fun movableDevices(): List<@Composable (Modifier) -> Unit> {
+                    return devices.map { dev ->
+                        deviceMap.getOrPut(dev.id) {
+                            movableContentOf { modifier: Modifier ->
+                                dev.DeviceGUI(
+                                    modifier,
+                                    devices,
+                                    connections,
+                                    viewModel::pushConnectionChange
+                                )
+                            }
+                        }
+                    }
+                }
+
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Column {
-                        val scrollState = rememberScrollState()
+//                        val scrollState = rememberScrollState()
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -79,39 +99,47 @@ class MainActivity : ComponentActivity() {
                                 .padding(16.dp, 16.dp, 16.dp, 0.dp),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Column(
-                                modifier = Modifier.verticalScroll(scrollState),
+                            LazyColumn(
+                                modifier = Modifier.animateContentSize(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-
-                                ) {
-
-                                for ((index, dev) in devices.withIndex()) {
-//                                    AddDeviceButton(deviceCreators = Engine.deviceCreators) {
-//                                        viewModel.pushNewDevice(index, it)
-//                                    }
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    dev.DeviceGUI(
-                                        devices,
-                                        connections,
-                                        viewModel::pushConnectionChange
+                            ) {
+                                items(
+                                    count = devices.size,
+                                    key = { devices[it].id }
+                                ) { index ->
+                                    AddDeviceButton(
+                                        modifier = Modifier
+                                            .animateItemPlacement(tween(600)),
+                                        deviceCreators = Engine.deviceCreators
+                                    ) {
+                                        viewModel.pushNewDevice(index, it)
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(8.dp)
+                                            .animateItemPlacement(tween(600))
                                     )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                                AddDeviceButton(deviceCreators = Engine.deviceCreators) {
-                                    viewModel.pushNewDevice(Voice.lastDevicePosition, it)
+                                    movableDevices()[index](
+                                        Modifier.animateItemPlacement(tween(600))
+                                    )
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(8.dp)
+                                            .animateItemPlacement(tween(600))
+                                    )
                                 }
                             }
                         }
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(780.dp),
+                                .height(200.dp),
                             shape = RectangleShape,
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                                containerColor = MaterialTheme.colorScheme.background
                             ),
                             elevation = CardDefaults.cardElevation(
-                                defaultElevation = 30.dp
+                                defaultElevation = 5.dp
                             )
 
                         ) {
@@ -128,9 +156,11 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     Image(
                                         imageVector = if (playing) {
-                                            Icons.Outlined.Close
+                                            ImageVector.vectorResource(
+                                                id = R.drawable.baseline_stop_24
+                                            )
                                         } else {
-                                            Icons.Outlined.PlayArrow
+                                            Icons.Filled.PlayArrow
                                         },
                                         modifier = Modifier.fillMaxSize(0.9f),
                                         contentScale = ContentScale.Inside,

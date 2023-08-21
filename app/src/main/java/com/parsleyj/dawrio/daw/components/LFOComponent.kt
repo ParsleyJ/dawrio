@@ -1,6 +1,5 @@
 package com.parsleyj.dawrio.daw.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +50,7 @@ class LFOComponent(
                 Meter(
                     value = outValue.value,
                     range = outValue.range,
-                    showText = true,
+                    showInnerText = true,
                     modifier = Modifier
                         .size(96.dp, 40.dp)
                         .padding(8.dp)

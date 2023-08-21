@@ -47,7 +47,7 @@ fun Knob(
 ) {
     val valueRangeSize = valueRange.endInclusive - valueRange.start
 
-    var value by remember() { mutableStateOf(initialValue) }
+    var value by remember { mutableStateOf(initialValue) }
 
     var overValueRangeEnd by remember(initialOverValueRangeEnd) {
         mutableStateOf(
@@ -96,7 +96,7 @@ fun Knob(
 
             if (overSet) {
                 val nextUnlimited =
-                    overValueRangeEnd - deltaIn160dp * valueRangeSize * 0.5f
+                    overValueRangeEnd - deltaIn160dp * valueRangeSize
                 val next = nextUnlimited.coerceIn(-valueRange.endInclusive..valueRange.endInclusive)
                 isBeingDragged = true
                 if (overValueRangeEnd != next) {

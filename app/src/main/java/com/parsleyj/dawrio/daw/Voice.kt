@@ -1,9 +1,11 @@
 package com.parsleyj.dawrio.daw
 
+import android.util.Log
 import com.parsleyj.dawrio.daw.device.Connection
 import com.parsleyj.dawrio.daw.device.Device
 import com.parsleyj.dawrio.daw.device.DeviceInput
 import com.parsleyj.dawrio.daw.device.DeviceOutput
+import com.parsleyj.dawrio.daw.element.Element
 import com.parsleyj.dawrio.daw.element.ElementHandle
 import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.daw.elementroute.RouteHandle
@@ -29,8 +31,11 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         get() = _customConnections.values.flatMap { it.routes } +
                 devices.flatMap { it.internalRoutes }
 
-    private val routesTrashBin = mutableListOf<RouteHandle>()
-    private val elementsTrashBin = mutableListOf<ElementHandle>()
+    private var mainOutputDevice: Device? = null
+
+    private val routesTrashBin = mutableListOf<Route>()
+    private val elementsTrashBin = mutableListOf<Element>()
+
 
     fun start() {
         startVoice(handle.toAddress)
@@ -56,7 +61,7 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
     private fun deleteCustomConnectionWithoutCommit(connection: Connection) {
         val old = _customConnections.remove(connection.id)
-        old?.routes?.map { it.handle }?.let { routesTrashBin.addAll(it) }
+        old?.routes?.let { routesTrashBin.addAll(it) }
     }
 
 
@@ -76,8 +81,8 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     }
 
     private fun deleteDeviceWithoutCommit(device: Device) {
-        elementsTrashBin.addAll(device.allElements.map { it.handle })
-        routesTrashBin.addAll(device.internalRoutes.map { it.handle })
+        elementsTrashBin.addAll(device.allElements)
+        routesTrashBin.addAll(device.internalRoutes)
         _devices.removeIf { device.id == it.id }
     }
 
@@ -126,6 +131,11 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
             deleteDeviceWithoutCommit(device)
         }
 
+
+        fun setMainOutput(device: Device) {
+            this@Voice.mainOutputDevice = device
+        }
+
     }
 
 
@@ -140,20 +150,59 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
 
 
     private fun commitNativeLayout() {
+        val routesAddresses = allRoutes
+            .map { it.handle.toAddress }
+            .toLongArray()
+        val elementAddresses = devices
+            .flatMap { it.allElements }
+            .map { it.handle.toAddress }
+            .toLongArray()
+        val outElementAddress = mainOutputDevice?.mainAudioOutputElement?.handle?.toAddress ?: 0L
+        Log.d("Voice", "Out element address is $outElementAddress")
         updateNativeLayout(
             handle.toAddress,
-            devices.flatMap { it.allElements }.map { it.handle.toAddress }.toLongArray(),
-            allRoutes.map { it.handle.toAddress }.toLongArray(),
-            devices.lastOrNull()?.mainAudioOutputElement?.handle?.toAddress ?: 0L
+            elementAddresses,
+            routesAddresses,
+            outElementAddress
         )
-//        routesTrashBin.forEach { destroyRoute(it.toAddress) }
-//        elementsTrashBin.forEach { destroyElement(it.toAddress) }
+        removeGarbage(routesAddresses, elementAddresses, outElementAddress)
+    }
+
+    private fun removeGarbage(
+        routesAddresses: LongArray,
+        elementAddresses: LongArray,
+        outElementAddress: Long
+    ) {
+        val deletedElements = mutableListOf<ElementHandle>()
+        elementsTrashBin
+            .filter {
+                it.handle.toAddress !in elementAddresses
+                        && it.handle.toAddress != outElementAddress
+            }
+            .distinctBy { it.handle }
+            .forEach {
+                Log.d("Voice", "Destroying element: $it")
+                destroyElement(it.handle.toAddress)
+                deletedElements.add(it.handle)
+            }
+
+        val deletedRoutes = mutableListOf<RouteHandle>()
+        routesTrashBin
+            .filter { it.handle.toAddress !in routesAddresses }
+            .distinctBy { it.handle }
+            .forEach {
+                Log.d("Voice", "Destroying route: $it")
+                destroyRoute(it.handle.toAddress)
+                deletedRoutes.add(it.handle)
+            }
+
+        elementsTrashBin.removeIf { it.handle in deletedElements }
+        routesTrashBin.removeIf { it.handle in deletedRoutes }
     }
 
 
     companion object {
-        const val lastDevicePosition:Int = -1
-
+        const val lastDevicePosition: Int = -1
 
         private external fun createVoice(): Long
         private external fun startVoice(address: Long)

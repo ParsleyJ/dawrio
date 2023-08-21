@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.parsleyj.dawrio.R
 import com.parsleyj.dawrio.daw.ValueFormat
 import com.parsleyj.dawrio.daw.element.ConstEmitter
 import com.parsleyj.dawrio.daw.element.Element
@@ -20,15 +19,22 @@ import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.ui.composables.ModulationAcceptingKnob
 import com.parsleyj.dawrio.util.size
 
+val sawOSCIcon = R.drawable.baseline_volume_up_24
 
-class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
+val SawOSCCreator = DeviceCreator(
+    name = "SawOSC",
+    icon = sawOSCIcon,
+    create = { SawOSCDevice() }
+)
+
+class SawOSCDevice : Device("SawOSC", icon = sawOSCIcon) {
     private val frequencyRange: ClosedFloatingPointRange<Float> = 20f..1_760f
     private val frequencyInitialValue: Float = 440f
 
     private val volumeRange: ClosedFloatingPointRange<Float> = 0f..1f
     private val volumeInitialValue: Float = 1f
 
-    private val freqKnobElement = ConstEmitter(frequencyInitialValue, "FreqKnob")
+    private val freqKnobElement = ConstEmitter("FreqKnob", frequencyInitialValue)
     private val freqModAdder = ValueAdder("FreqAdder", clippingRange = frequencyRange)
     private var freqModScale: Float
         get() = freqModAdder.scale
@@ -38,14 +44,14 @@ class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
 
     private val sawOSC = SawOsc("OSC")
 
-    private val volumeKnobElement = ConstEmitter(volumeInitialValue, "OutVolKnob")
+    private val volumeKnobElement = ConstEmitter("OutVolKnob", volumeInitialValue)
     private val volumeModAdder = ValueAdder("VolumeAdder", clippingRange = volumeRange)
     private var volumeModScale: Float
         get() = volumeModAdder.scale
         set(value) {
             volumeModAdder.scale = value
         }
-    private val outVolume = Volume(volumeInitialValue, "OutVolume")
+    private val outVolume = Volume("OutVolume", volumeInitialValue)
 
     init {
         freqModScale = frequencyRange.size
@@ -67,8 +73,8 @@ class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
 
     val stereoOutput = DeviceOutput(this, "Audio", true, DeviceStreamType.StereoAudio) {
         when (it) {
-            0 -> sawOSC.outAudioL
-            1 -> sawOSC.outAudioR
+            0 -> outVolume.outAudioL
+            1 -> outVolume.outAudioR
             else -> throw RuntimeException("Invalid channel: $it")
         }
     }
@@ -118,12 +124,12 @@ class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
                     modulationInput = freqModInput,
                     findConnection = { freqModInput.findConnection(allConnections) },
                     allDevices = allDevices,
-                    initialValue = frequencyInitialValue,
+                    initialValue = freqKnobElement.value,
                     valueRange = frequencyRange,
                     valueFormat = ValueFormat.Frequency,
                     onValueChange = { freqKnobElement.value = it },
                     refreshingOvervalue = { freqModAdder.outValue.readValue() },
-                    onModScaleChange = { freqModScale = it*frequencyRange.size },
+                    onModScaleChange = { freqModScale = it * frequencyRange.size },
                     onConnectChangeRequest = { onConnectChangeRequest(freqModInput, it) }
                 )
 
@@ -133,12 +139,12 @@ class SawOSCDevice : Device("SawOSC", icon= Icons.Outlined.Notifications) {
                     modulationInput = volumeModInput,
                     findConnection = { volumeModInput.findConnection(allConnections) },
                     allDevices = allDevices,
-                    initialValue = volumeInitialValue,
+                    initialValue = volumeKnobElement.value,
                     valueRange = volumeRange,
                     valueFormat = ValueFormat.NumericWithDecimals(1),
                     onValueChange = { volumeKnobElement.value = it },
                     refreshingOvervalue = { volumeModAdder.outValue.readValue() },
-                    onModScaleChange = { volumeModScale = it*volumeRange.size },
+                    onModScaleChange = { volumeModScale = it * volumeRange.size },
                     onConnectChangeRequest = { onConnectChangeRequest(volumeModInput, it) }
                 )
             }

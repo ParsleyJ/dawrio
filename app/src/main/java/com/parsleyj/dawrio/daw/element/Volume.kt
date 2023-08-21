@@ -1,13 +1,12 @@
 package com.parsleyj.dawrio.daw.element
 
-import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
 
 class Volume(
-    initialAmount: Float,
     label: String,
+    initialAmount: Float,
     description: String = "",
     handle: ElementHandle = ElementHandle(createVolume(initialAmount))
 ) : Element(label, description, handle) {

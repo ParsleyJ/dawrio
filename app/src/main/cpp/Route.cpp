@@ -28,3 +28,10 @@ Java_com_parsleyj_dawrio_daw_elementroute_Route_00024Companion_createRoute(JNIEn
                                                               jlong in_device, jint in_port) {
     return reinterpret_cast<jlong>(new Route(out_device, out_port, in_device, in_port));
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_parsleyj_dawrio_daw_elementroute_Route_00024Companion_destroyRoute(JNIEnv *env,
+                                                                            jobject thiz,
+                                                                            jlong route_address) {
+    delete reinterpret_cast<Route *>(route_address);
+}

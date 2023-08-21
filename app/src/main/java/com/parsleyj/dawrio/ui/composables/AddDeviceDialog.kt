@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -67,7 +68,7 @@ fun AddDeviceDialog(
                 LazyColumn(modifier = Modifier.height(500.dp)) {
                     itemsIndexed(deviceCreators) { _, deviceCreator ->
                         AddDeviceDialogOption(
-                            icon = deviceCreator.icon,
+                            icon = ImageVector.vectorResource(id = deviceCreator.icon),
                             text = deviceCreator.name,
                             height= 48.dp,
                             currentlySelected = selectedOption == deviceCreator,

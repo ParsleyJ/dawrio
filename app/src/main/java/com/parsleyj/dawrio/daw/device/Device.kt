@@ -1,9 +1,9 @@
 package com.parsleyj.dawrio.daw.device
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Warning
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.Modifier
+import com.parsleyj.dawrio.R
 import com.parsleyj.dawrio.daw.ValueFormat
 import com.parsleyj.dawrio.daw.element.Element
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
@@ -102,8 +102,9 @@ abstract class Device(
     val deviceName: String,
     var label: String = NameGenerator.newName(deviceName),
     val description: String = "",
-    val icon: ImageVector = Icons.Outlined.Warning,
-    val id: UUID = UUID.randomUUID() //Use value classes
+    @DrawableRes val icon: Int = R.drawable.baseline_warning_24,
+    val removable: Boolean = true,
+    val id: UUID = UUID.randomUUID() //Use value classes){}
 ) {
 
     abstract val allOutputs: List<DeviceOutput>
@@ -112,7 +113,6 @@ abstract class Device(
     abstract val internalRoutes: List<Route>
     abstract val mainAudioOutputElement: Element?
 
-    //TODO each device has its own view model
     @Composable
     abstract fun InnerGUI(
         allDevices: List<Device>,
@@ -123,12 +123,15 @@ abstract class Device(
 
     @Composable
     fun DeviceGUI(
+        modifier: Modifier,
         allDevices: List<Device>,
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit
     ) {
         DeviceCard(
+            modifier = modifier,
             device = this,
+            showHeader = removable,
             allDevices = allDevices,
             allConnections = allConnections,
             onConnectChangeRequest = onConnectChangeRequest

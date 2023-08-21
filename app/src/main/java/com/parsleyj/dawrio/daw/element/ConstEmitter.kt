@@ -5,8 +5,8 @@ import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 
 
 class ConstEmitter(
-    initialValue: Float,
     label: String,
+    initialValue: Float,
     description: String = "",
     handle: ElementHandle = ElementHandle(createConstEmitter(initialValue))
 ) : Element(label, description, handle) {

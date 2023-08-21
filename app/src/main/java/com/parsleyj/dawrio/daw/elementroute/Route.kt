@@ -28,7 +28,7 @@ class Route(
 
     override fun toString() = "$outPort -> $inPort"
     fun destroy() {
-        //TODO destroy
+        destroyRoute(this.handle.toAddress)
     }
 
     companion object {
@@ -38,5 +38,6 @@ class Route(
             inElement: Long,
             inPort: Int,
         ): Long
+        private external fun destroyRoute(routeAddress:Long)
     }
 }

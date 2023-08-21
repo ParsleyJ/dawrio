@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -22,6 +20,7 @@ import com.parsleyj.dawrio.daw.device.DeviceCreator
 
 @Composable
 fun AddDeviceButton(
+    modifier: Modifier,
     deviceCreators: List<DeviceCreator>,
     onCreateDevice: (DeviceCreator) -> Unit
 ) {
@@ -36,7 +35,7 @@ fun AddDeviceButton(
     }
 
     FilledIconButton(
-        modifier = Modifier.size(64.dp, 32.dp),
+        modifier = modifier.size(64.dp, 32.dp),
         onClick = { showDialog = true },
     ) {
         Image(

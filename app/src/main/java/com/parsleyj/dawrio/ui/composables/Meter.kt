@@ -24,7 +24,7 @@ fun Meter(
     meterColor: Color = MaterialTheme.colorScheme.primary,
     bgColor: Color = MaterialTheme.colorScheme.background,
     outlineColor: Color = MaterialTheme.colorScheme.outline,
-    showText: Boolean = false,
+    showInnerText: Boolean = false,
     orientation: Orientation = Orientation.Horizontal,
     format: (f: Float) -> String = ValueFormat.NumericWithDecimals(1).convertToString,
 ) {
@@ -77,7 +77,7 @@ fun Meter(
                 cornerRadius = cornerRadius,
             )
         })
-        if (showText) {
+        if (showInnerText) {
             Text(
                 text = format(value),
                 style = MaterialTheme.typography.labelSmall,

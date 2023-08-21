@@ -18,7 +18,7 @@ class VolumeComponent(
     label: String = NameGenerator.newName("Volume"),
     description: String = "",
 ) : Component {
-    override val element: Element = Volume(1.0f, label, description)
+    override val element: Element = Volume(label, 1.0f, description)
 
     @Composable
     override fun InnerGUI(allElements: List<Element>, allRoutes: List<Route>) {

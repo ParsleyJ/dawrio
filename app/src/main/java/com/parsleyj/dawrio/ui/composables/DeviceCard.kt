@@ -17,13 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -35,6 +35,8 @@ import com.parsleyj.dawrio.daw.device.DeviceOutput
 
 @Composable
 fun DeviceCard(
+    modifier: Modifier,
+    showHeader: Boolean,
     device: Device,
     allDevices: List<Device>,
     allConnections: List<Connection>,
@@ -45,11 +47,17 @@ fun DeviceCard(
     val deviceName = device.label
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        DeviceCardHeader(headerHeight, device.icon, deviceName)
+        if (showHeader) {
+            DeviceCardHeader(
+                headerHeight = headerHeight,
+                icon = ImageVector.vectorResource(id = device.icon),
+                deviceName = deviceName
+            )
+        }
         device.InnerGUI(allDevices, allConnections, onConnectChangeRequest)
     }
 

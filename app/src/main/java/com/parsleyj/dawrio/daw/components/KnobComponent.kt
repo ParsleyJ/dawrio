@@ -56,6 +56,6 @@ class KnobComponent(
     }
 
 
-    override val element: ConstEmitter = ConstEmitter(initialValue, label, description)
+    override val element: ConstEmitter = ConstEmitter(label, initialValue, description)
 
 }

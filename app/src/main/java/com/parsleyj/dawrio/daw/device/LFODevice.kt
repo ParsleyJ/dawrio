@@ -1,23 +1,16 @@
 package com.parsleyj.dawrio.daw.device
 
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.parsleyj.dawrio.R
 import com.parsleyj.dawrio.daw.ValueFormat
 import com.parsleyj.dawrio.daw.element.ConstEmitter
 import com.parsleyj.dawrio.daw.element.Element
@@ -26,14 +19,21 @@ import com.parsleyj.dawrio.daw.element.LFOWaveTypes
 import com.parsleyj.dawrio.daw.element.ValueAdder
 import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.ui.composables.KnobWithLabel
-import com.parsleyj.dawrio.ui.composables.Meter
 import com.parsleyj.dawrio.ui.composables.ModulationAcceptingKnob
+import com.parsleyj.dawrio.ui.composables.VerticalLabeledMeter
 import com.parsleyj.dawrio.ui.composables.refreshingState
 import com.parsleyj.dawrio.util.size
 import com.parsleyj.dawrio.util.toFloatRange
 
 
-class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
+val lfoIcon =R.drawable.baseline_waves_24
+
+val LFOCreator =
+    DeviceCreator("LFO", lfoIcon) {
+        LFODevice()
+    }
+
+class LFODevice : Device("LFO", icon = lfoIcon) {
     private val frequencyRange: ClosedFloatingPointRange<Float> = 0f..20f
     private val frequencyInitialValue: Float = 1f
 
@@ -42,7 +42,7 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
     private val maxValueRange: ClosedFloatingPointRange<Float> = 0f..1f
     private val maxValueInitialValue: Float = 1f
 
-    private val freqKnobElement = ConstEmitter(frequencyInitialValue, "FreqKnob")
+    private val freqKnobElement = ConstEmitter("FreqKnob", frequencyInitialValue)
     private val freqModAdder = ValueAdder("FreqAdder", clippingRange = frequencyRange)
     private var freqModScale: Float
         get() = freqModAdder.scale
@@ -50,10 +50,10 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
             freqModAdder.scale = value
         }
 
-    private val typeKnobElement = ConstEmitter(typeInitialValue, "TypeKnob")
+    private val typeKnobElement = ConstEmitter("TypeKnob", typeInitialValue)
 
 
-    private val maxValueKnobElement = ConstEmitter(maxValueInitialValue, "MaxValKnob")
+    private val maxValueKnobElement = ConstEmitter("MaxValKnob", maxValueInitialValue)
     private val maxValueModAdder = ValueAdder("MaxValKnob", clippingRange = maxValueRange)
     private var maxValueModScale: Float
         get() = maxValueModAdder.scale
@@ -143,7 +143,7 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
                     modulationInput = freqModInput,
                     findConnection = { freqModInput.findConnection(allConnections) },
                     allDevices = allDevices,
-                    initialValue = frequencyInitialValue,
+                    initialValue = freqKnobElement.value,
                     valueRange = frequencyRange,
                     valueFormat = ValueFormat.Frequency,
 
@@ -157,7 +157,7 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
                     headerText = "Type",
                     onValueChange = { typeKnobElement.value = it },
                     valueRange = LFOWaveTypes.values().size.toFloatRange(),
-                    initialValue = typeInitialValue,
+                    initialValue = typeKnobElement.value,
                     format = ValueFormat.Options<LFOWaveTypes>().convertToString
                 )
 
@@ -167,7 +167,7 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
                     modulationInput = maxValueModInput,
                     findConnection = { maxValueModInput.findConnection(allConnections) },
                     allDevices = allDevices,
-                    initialValue = maxValueInitialValue,
+                    initialValue = maxValueKnobElement.value,
                     valueRange = maxValueRange,
                     valueFormat = ValueFormat.NumericWithDecimals(1),
                     onValueChange = { maxValueKnobElement.value = it },
@@ -180,30 +180,13 @@ class LFODevice : Device("LFO", icon = Icons.Outlined.ExitToApp) {
                     modulationOutput.provideOutPort(0).readValue()
                 })
 
-                //TODO move into custom component
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(8.dp),
-                ) {
-                    Text(text = "Output", textAlign = TextAlign.Center)
-                    Spacer(Modifier.size(8.dp))
-                    Meter(
-                        modifier = Modifier.size(16.dp, 64.dp),
-                        value = outMeterValue,
-                        meterColor = MaterialTheme.colorScheme.secondary,
-                        orientation = Orientation.Vertical,
-                        showText = false,
-                    )
-                    Spacer(Modifier.size(8.dp))
-                    Text(
-                        text = ValueFormat.NumericWithDecimals(1).convertToString(outMeterValue),
-                        textAlign = TextAlign.Center
-                    )
-                }
+
+                VerticalLabeledMeter("Output", outMeterValue, MaterialTheme.colorScheme.secondary)
 
             }
         }
     }
 
 }
+
 

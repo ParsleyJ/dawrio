@@ -41,6 +41,8 @@ private:
     size_t circularPointer_ = 0;
     double sumOfSquaresL_ = 0.0;
     double sumOfSquaresR_ = 0.0;
+
+    void algo1();
 };
 
 

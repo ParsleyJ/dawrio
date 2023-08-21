@@ -91,11 +91,24 @@ void AudioEngine::stop() {
     }
 }
 
-void AudioEngine::setToneOn(bool isToneOn) {
-    if (isToneOn) {
-        voice_.load()->start();
+bool AudioEngine::isSoundOn() {
+
+    Voice *pVoice = this->voice_.load();
+    if(pVoice == nullptr){
+        return false;
+    }
+    return pVoice->isActive();
+}
+
+void AudioEngine::setSoundOn(bool flag) {
+    Voice *pVoice = voice_.load();
+    if(pVoice == nullptr){
+        return;
+    }
+    if (flag) {
+        pVoice->start();
     } else {
-        voice_.load()->stop();
+        pVoice->stop();
     }
 }
 

@@ -1,6 +1,7 @@
 package com.parsleyj.dawrio.daw
 
 import android.util.Log
+import com.parsleyj.dawrio.Engine
 import com.parsleyj.dawrio.daw.device.Connection
 import com.parsleyj.dawrio.daw.device.Device
 import com.parsleyj.dawrio.daw.device.DeviceInput
@@ -158,13 +159,23 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
             .map { it.handle.toAddress }
             .toLongArray()
         val outElementAddress = mainOutputDevice?.mainAudioOutputElement?.handle?.toAddress ?: 0L
+
         Log.d("Voice", "Out element address is $outElementAddress")
+
+        val wasOn = Engine.isSoundOn()
+
+        if(wasOn) {
+            Engine.setSoundOn(false)
+        }
         updateNativeLayout(
             handle.toAddress,
             elementAddresses,
             routesAddresses,
             outElementAddress
         )
+        if(wasOn) {
+            Engine.setSoundOn(true)
+        }
         removeGarbage(routesAddresses, elementAddresses, outElementAddress)
     }
 

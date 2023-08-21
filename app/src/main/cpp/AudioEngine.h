@@ -15,7 +15,8 @@ public:
     bool start();
     void stop();
     void restart();
-    void setToneOn(bool isToneOn);
+    void setSoundOn(bool flag);
+    bool isSoundOn();
     void setVoice(Voice* voice);
 private:
     std::atomic<Voice*> voice_{nullptr};

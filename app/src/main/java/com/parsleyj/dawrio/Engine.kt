@@ -5,7 +5,6 @@ import com.parsleyj.dawrio.daw.device.DeviceCreator
 import com.parsleyj.dawrio.daw.device.LFOCreator
 import com.parsleyj.dawrio.daw.device.MainOutputDevice
 import com.parsleyj.dawrio.daw.device.SawOSCCreator
-import com.parsleyj.dawrio.daw.device.SawOSCDevice
 
 object Engine {
     // Used to load the 'dawrio' library on application startup.
@@ -40,5 +39,7 @@ object Engine {
 
     external fun stopEngine()
 
-    external fun beepEvent(on: Boolean)
+    external fun setSoundOn(on: Boolean)
+
+    external fun isSoundOn():Boolean
 }

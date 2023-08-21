@@ -48,7 +48,7 @@ class VoiceViewModel : ViewModel() {
         Log.d("Sound", "elements(${allElements.size})=$allElements")
         Log.d("Sound", "routes(${voice.allRoutes.size})=${voice.allRoutes}")
         _playing.update {
-            Engine.beepEvent(playing)
+            Engine.setSoundOn(playing)
             if (playing) {
                 voice.start()
             } else {

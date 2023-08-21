@@ -5,8 +5,14 @@
 static AudioEngine *audioEngine = new AudioEngine();
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_Engine_beepEvent(JNIEnv *env, jobject jthis, jboolean on) {
-    audioEngine->setToneOn(on);
+Java_com_parsleyj_dawrio_Engine_setSoundOn(JNIEnv *env, jobject jthis, jboolean on) {
+    audioEngine->setSoundOn(on);
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_parsleyj_dawrio_Engine_isSoundOn(JNIEnv *env, jobject thiz) {
+    return audioEngine->isSoundOn();
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -23,14 +29,15 @@ Java_com_parsleyj_dawrio_Engine_stopEngine(JNIEnv *env, jobject jthis) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_destroy(JNIEnv *env, jobject thiz,
-                                                            jlong device_address) {
+                                                                    jlong device_address) {
     delete reinterpret_cast<Element *>(device_address);
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_readElementOutput(JNIEnv *env, jobject thiz,
-                                                                      jlong device_address,
-                                                                      jint port_number) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_readElementOutput(JNIEnv *env,
+                                                                              jobject thiz,
+                                                                              jlong device_address,
+                                                                              jint port_number) {
     return reinterpret_cast<Element *>(device_address)->emitOutput(port_number);
 }
 
@@ -39,3 +46,4 @@ JNIEXPORT void JNICALL
 Java_com_parsleyj_dawrio_Engine_setVoice(JNIEnv *env, jobject thiz, jlong address) {
     audioEngine->setVoice(reinterpret_cast<Voice *>(address));
 }
+

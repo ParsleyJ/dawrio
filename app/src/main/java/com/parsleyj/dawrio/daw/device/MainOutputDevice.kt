@@ -34,7 +34,12 @@ class MainOutputDevice(label: String) : Device(
     val volume: Volume = Volume("MainOutputVolume", 1f)
 
     val volumeMeter: VolumeMeter = VolumeMeter("VolumeMeter",
-        441 /* <- 30ms */
+//        300 /* <- just 300 samples */,
+//        13230 /* <- 300ms */,
+//        2205 /* <- 50ms */,
+        441 /* <- 10ms */,
+//        882 /* <- 20ms */,
+
     )
 
     val stereoInput: DeviceInput = DeviceInput(

@@ -91,17 +91,17 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Column {
-//                        val scrollState = rememberScrollState()
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.9f)
                                 .padding(16.dp, 16.dp, 16.dp, 0.dp),
-                            contentAlignment = Alignment.Center,
+                            contentAlignment = Alignment.BottomCenter,
                         ) {
                             LazyColumn(
-                                modifier = Modifier.animateContentSize(),
+                                modifier = Modifier.fillMaxWidth().animateContentSize(tween(600)),
                                 horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Bottom
                             ) {
                                 items(
                                     count = devices.size,

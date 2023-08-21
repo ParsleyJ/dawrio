@@ -22,7 +22,7 @@ public:
     virtual void processState(int32_t sampleRate);
 
     virtual size_t getOutputsCount() {
-        return 1; //dB L/R
+        return 2; //rms L/R
     }
 
     virtual size_t getInputsCount() {
@@ -36,13 +36,10 @@ private:
     size_t bufferSize_;
     double *bufferL_;
     double *bufferR_;
-    float outputs_[2];
-    size_t recorded_ = 0;
+    float outputs_[2]{};
     size_t circularPointer_ = 0;
     double sumOfSquaresL_ = 0.0;
     double sumOfSquaresR_ = 0.0;
-
-    void algo1();
 };
 
 

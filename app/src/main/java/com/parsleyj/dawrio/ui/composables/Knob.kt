@@ -7,22 +7,29 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.parsleyj.dawrio.ui.theme.DawrioTheme
 import com.parsleyj.dawrio.util.toAngle
 
 
@@ -38,7 +45,7 @@ fun Knob(
     overValuePlacementRadiusScale: Float = 0.9f,
     showOverValue: Boolean = true,
     orientation: Orientation = Orientation.Vertical,
-    strokeWidth: Dp = 2.dp,
+    strokeWidth: Dp = 3.dp,
     overValueDelayMs: Long = android.view.ViewConfiguration.getLongPressTimeout().toLong(),
     fineModeDelayMs: Long = 5000L,
     onClick: () -> Unit = {},
@@ -262,3 +269,27 @@ fun Knob(
 }
 
 
+@Preview
+@Composable
+fun PreviewKnob() {
+    val size = 64.dp
+    val stroke = 3.dp
+    DawrioTheme(darkTheme = true, dynamicColor = false) {
+        Surface(Modifier.size(size+2.dp)) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp).size(size)
+            ) {
+                Knob(
+                    modifier=Modifier.size(size),
+                    strokeWidth = stroke,
+                    initialValue=.5f,
+                    special =true,
+                    showOverValue = true,
+                    initialOverValueRangeEnd = 1f,
+                    onValueChange = {}
+                )
+            }
+        }
+    }
+}

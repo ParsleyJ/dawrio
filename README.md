@@ -21,7 +21,7 @@
 <h3 align="center">Dawrio</h3>
 
   <p align="center">
-    The missing DAW for Android.
+    An experimental DAW for Android
     <!--
     <br />
     <a href="https://github.com/ParsleyJ/dawrio"><strong>Explore the docs »</strong></a>
@@ -45,7 +45,7 @@ In this one-week timeframe, I developed a prototype UI for the core technology o
 
 (**WARNING: VOLUME**)
 
-<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/134e6b25-b16a-443f-800d-b474a369bef7" type="video/mp4">
+<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/9f558dcf-a8d3-411e-8c2c-3c64ad1b38fe" type="video/mp4">
 </video>
 
 
@@ -59,7 +59,7 @@ Every device in the Voice editor displays adjustable parameters manipulated thro
 
 Even with just these initial two devices and their capabilities, Dawrio provides the means to synthesize some interesting sounds.
 
-<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/77a9ebc6-1312-4f64-aebf-1b40d1c085a8" type="video/mp4">
+<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/f4a13aaf-532d-4d47-a04a-fa4257e3f0aa" type="video/mp4">
 </video>
 
 

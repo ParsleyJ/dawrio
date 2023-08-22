@@ -38,21 +38,29 @@
 
 ## About the project
 
-The *Dawrio* (Prototype) was my personal one-week long (August 14th to 21st, 2023) summer project. I started it to learn modern Android development technologies and practices, such as Jetpack Compose and the MVVM architectural pattern. 
-This is also my first experience in writing algorithms for digital signal processing with the Android AAudio framework. 
+*Dawrio* (Prototype) represents my personal week-long summer project (August 14th to 21st, 2023). Its primary objective was to explore modern Android development technologies and practices, including Jetpack Compose and the MVVM architectural pattern.
+This was also my first experience in writing algorithms for digital signal processing with the Android AAudio framework. 
 
-In this week I managed to develop a prototype UI for the core technology of the app, which is the *Voice Editor*. To make it fully functional, I also developed the audio engine and the core components for audio processing in C++.
+In this one-week timeframe, I developed a prototype UI for the core technology of the app, the *Voice Editor*. 
+
+(**WARNING: VOLUME**)
+
+<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/134e6b25-b16a-443f-800d-b474a369bef7" type="video/mp4">
+</video>
 
 
+To ensure full functionality, I also created the audio engine and essential components for audio processing in C++.
 
+In Dawrio, Voices are similar to what are usually referred as *tracks* in popular DAWs. Looking ahead, the app will support the creation and playback of multiple Voices in the same Dawrio *Project*. Each voice of will produce audio streams which can be mixed together to create music.
 
-In Dawrio, Voices are similar to what are usually referred as *tracks* in popular DAWs. In the future, the app will support the creation of multiple Voices in the same Dawrio *Project*, each of which will generate audio streams which could be mixed together to produce music.
+In Dawrio, a *Voice* is a set of interconnected *Devices*, each capable of transmitting signals to other devices. In this prototype version of the app, there are two types of signals - *Modulation* and *Audio* - and two types of devices - *LFO* (Low Frequency Oscillators) and *SawOSC* (Sawtooth-wave-based Oscillators).
 
-In Dawrio, a *Voice* is a set of interconnected *Devices*, where each Device can transmit signals to other devices. In this prototype version, there are two types of signals - *Modulation* and *Audio* - and two types of devices - *LFO* (Low Frequency Oscillators) and *SawOSC* (Sawtooth-wave-based Oscillator).
+Every device in the Voice editor displays adjustable parameters manipulated through dragging gestures on knobs. Some knobs (indicated by a distinct color at the center) can be configured to receive Modulation signals from other devices. 
 
-Each device in the Voice editor has parameters that can be changed with dragging gestures on knobs. Some knobs (highlighted by a different color at the center) can be configured to receive Modulation signals from other devices. 
+Even with just these initial two devices and their capabilities, Dawrio provides the means to synthesize some interesting sounds.
 
-These first two devices and their abilities alone already provide the means to synthesize some interesting sounds.
+<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/77a9ebc6-1312-4f64-aebf-1b40d1c085a8" type="video/mp4">
+</video>
 
 
 

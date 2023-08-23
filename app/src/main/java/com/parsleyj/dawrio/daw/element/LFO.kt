@@ -1,7 +1,6 @@
 package com.parsleyj.dawrio.daw.element
 
 import com.parsleyj.dawrio.daw.ValueFormat
-import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.elementroute.ElementInPort
 import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 

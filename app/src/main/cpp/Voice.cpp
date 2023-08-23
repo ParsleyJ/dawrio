@@ -3,7 +3,7 @@
 
 Voice::Voice() = default;
 
-Voice::~Voice(){
+Voice::~Voice() {
     //Resets all routes
     setLayout(
         this->getDevicesAddressRegion(),
@@ -14,12 +14,12 @@ Voice::~Voice(){
     );
 
     size_t routeCount = this->getElementCount();
-    for(size_t i = 0; i < routeCount; i++){
+    for (size_t i = 0; i < routeCount; i++) {
         delete this->routes_.load()[i];
     }
 
     size_t deviceCount = this->getElementCount();
-    for(size_t i = 0; i < deviceCount; i++){
+    for (size_t i = 0; i < deviceCount; i++) {
         delete this->getElement(i);
     }
 }
@@ -111,14 +111,20 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_startVoice(
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_stopVoice([[maybe_unused]] JNIEnv *env, [[maybe_unused]] jobject thiz,
-                                                            jlong address) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_stopVoice(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong address
+) {
     reinterpret_cast<Voice *>(address)->stop();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyVoice([[maybe_unused]] JNIEnv *env, [[maybe_unused]] jobject thiz,
-                                                               jlong address) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyVoice(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong address
+) {
     delete reinterpret_cast<Voice *>(address);
 }
 
@@ -126,12 +132,14 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyVoice([[maybe_unused]] 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(JNIEnv *env,
-                                                                     [[maybe_unused]] jobject thiz,
-                                                                     jlong address,
-                                                                     jlongArray devices,
-                                                                     jlongArray routes,
-                                                                     jlong outDeviceAddress) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(
+    JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong address,
+    jlongArray devices,
+    jlongArray routes,
+    jlong outDeviceAddress
+) {
     auto voice = reinterpret_cast<Voice *>(address);
     auto devicesLength = env->GetArrayLength(devices);
     auto routesLength = env->GetArrayLength(routes);
@@ -144,15 +152,21 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_updateNativeLayout(JNIEnv *env
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElementCount([[maybe_unused]] JNIEnv *env,
-                                                                  [[maybe_unused]] jobject thiz,
-                                                                  jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElementCount(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     return (jint) reinterpret_cast<Voice *>(addr)->getElementCount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElements(JNIEnv *env, [[maybe_unused]] jobject thiz, jlong addr,
-                                                              jlongArray result_array) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElements(
+    JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr,
+    jlongArray result_array
+) {
     auto voice = reinterpret_cast<Voice *>(addr);
     auto count = voice->getElementCount();
     env->SetLongArrayRegion(result_array, 0, (jsize) count, voice->getDevicesAddressRegion());
@@ -161,36 +175,49 @@ Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getElements(JNIEnv *env, [[may
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutesCount([[maybe_unused]] JNIEnv *env,
-                                                                 [[maybe_unused]] jobject thiz,
-                                                                 jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutesCount(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     return (jint) reinterpret_cast<Voice *>(addr)->getRouteCount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutes(JNIEnv *env, [[maybe_unused]] jobject thiz, jlong addr,
-                                                            jlongArray result_array) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getRoutes(
+    JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr,
+    jlongArray result_array
+) {
     auto voice = reinterpret_cast<Voice *>(addr);
     auto count = voice->getRouteCount();
     env->SetLongArrayRegion(result_array, 0, (jsize) count, voice->getRoutesAddressRegion());
 }
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutElement([[maybe_unused]] JNIEnv *env,
-                                                                [[maybe_unused]] jobject thiz,
-                                                                jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_getOutElement(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     return reinterpret_cast<jlong>(reinterpret_cast<Voice *>(addr)->getOutDevice());
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyRoute([[maybe_unused]] JNIEnv *env, [[maybe_unused]] jobject thiz,
-                                                               jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyRoute(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     delete reinterpret_cast<Route *>(addr);
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyElement([[maybe_unused]] JNIEnv *env,
-                                                                 [[maybe_unused]] jobject thiz,
-                                                                 jlong addr) {
+Java_com_parsleyj_dawrio_daw_Voice_00024Companion_destroyElement(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     delete reinterpret_cast<Route *>(addr);
 }

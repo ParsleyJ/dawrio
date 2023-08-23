@@ -83,7 +83,7 @@ val seed = Color(0xFF50A350)
 
 
 
-private val LightColors = lightColorScheme(
+private val dawrioLightColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -116,7 +116,7 @@ private val LightColors = lightColorScheme(
 )
 
 
-private val DarkColors = darkColorScheme(
+private val dawrioDarkColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -161,8 +161,8 @@ fun DawrioTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColors
-        else -> LightColors
+        darkTheme -> dawrioDarkColors
+        else -> dawrioLightColors
     }
     val view = LocalView.current
     if (!view.isInEditMode) {

@@ -23,21 +23,29 @@ float Volume::emitOutput(size_t index) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createVolume([[maybe_unused]] JNIEnv *env,
-                                                                         [[maybe_unused]] jobject thiz, jfloat amount) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createVolume(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jfloat amount
+) {
     return reinterpret_cast<jlong>(new Volume(amount));
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_getAmount([[maybe_unused]] JNIEnv *env,
-                                                                     [[maybe_unused]] jobject thiz,
-                                                                    jlong addr) {
+Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_getAmount(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr
+) {
     return reinterpret_cast<Volume *>(addr)->getAmount();
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_setAmount([[maybe_unused]] JNIEnv *env,
-                                                                     [[maybe_unused]] jobject thiz,
-                                                                    jlong addr, jfloat amount) {
+Java_com_parsleyj_dawrio_daw_element_Volume_00024Companion_setAmount(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong addr,
+    jfloat amount
+) {
     reinterpret_cast<Volume *>(addr)->setAmount(amount);
 }

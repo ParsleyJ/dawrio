@@ -19,7 +19,6 @@ import com.parsleyj.dawrio.daw.element.VolumeMeter
 import com.parsleyj.dawrio.daw.elementroute.Route
 import com.parsleyj.dawrio.ui.composables.SelectSourceButton
 import com.parsleyj.dawrio.ui.composables.VerticalLabeledMeter
-import com.parsleyj.dawrio.ui.composables.VerticalLabeledStereoMeter
 import com.parsleyj.dawrio.ui.composables.refreshingState
 
 

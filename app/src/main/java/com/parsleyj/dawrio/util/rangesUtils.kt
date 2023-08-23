@@ -1,7 +1,5 @@
 package com.parsleyj.dawrio.util
 
-import com.parsleyj.dawrio.daw.element.LFOWaveTypes
-
 fun Float.toAngle(
     vRange: ClosedFloatingPointRange<Float>,
     aRange: ClosedFloatingPointRange<Float> = 0f..360f

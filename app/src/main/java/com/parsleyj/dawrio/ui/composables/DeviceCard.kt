@@ -65,7 +65,7 @@ fun DeviceCard(
                 onDeleteRequest = onDeleteRequest,
             )
         }
-        device.InnerGUI(allDevices, allConnections, onConnectChangeRequest)
+        device.DeviceScreen(allDevices, allConnections, onConnectChangeRequest)
     }
 
 }

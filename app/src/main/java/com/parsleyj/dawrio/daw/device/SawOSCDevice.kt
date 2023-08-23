@@ -105,7 +105,7 @@ class SawOSCDevice : Device("SawOSC", icon = sawOSCIcon) {
 
 
     @Composable
-    override fun InnerGUI(
+    override fun DeviceScreen(
         allDevices: List<Device>,
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit

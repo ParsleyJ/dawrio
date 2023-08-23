@@ -3,6 +3,7 @@ package com.parsleyj.dawrio.daw
 import android.util.Log
 import com.parsleyj.dawrio.Engine
 import com.parsleyj.dawrio.daw.device.Connection
+import com.parsleyj.dawrio.daw.device.ConnectionID
 import com.parsleyj.dawrio.daw.device.Device
 import com.parsleyj.dawrio.daw.device.DeviceInput
 import com.parsleyj.dawrio.daw.device.DeviceOutput
@@ -23,8 +24,8 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
     private val _devices: MutableList<Device> = mutableListOf()
     val devices: List<Device> get() = _devices.toList()
 
-    private val _customConnections: MutableMap<UUID, Connection> = mutableMapOf()
-    val customConnections: Map<UUID, Connection> = _customConnections
+    private val _customConnections: MutableMap<ConnectionID, Connection> = mutableMapOf()
+    val customConnections: Map<ConnectionID, Connection> = _customConnections
 
     val connectionsList: List<Connection> get() = customConnections.values.toList()
 
@@ -55,7 +56,6 @@ class Voice(val handle: VoiceHandle = VoiceHandle(createVoice())) {
         //only one connection for each input
         val incompatible = _customConnections.values.filter { it.to.id == connection.to.id }
         incompatible.forEach { deleteCustomConnectionWithoutCommit(it) }
-
 
         _customConnections[connection.id] = connection //There are no new routes!
     }

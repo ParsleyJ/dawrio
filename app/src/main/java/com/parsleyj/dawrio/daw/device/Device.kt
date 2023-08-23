@@ -10,6 +10,8 @@ import com.parsleyj.dawrio.ui.composables.DeviceCard
 import com.parsleyj.dawrio.util.NameGenerator
 import java.util.UUID
 
+@JvmInline
+value class DeviceID(val toUUID: UUID = UUID.randomUUID())
 
 abstract class Device(
     val deviceName: String,
@@ -17,7 +19,7 @@ abstract class Device(
     val description: String = "",
     @DrawableRes val icon: Int = R.drawable.baseline_warning_24,
     val removable: Boolean = true,
-    val id: UUID = UUID.randomUUID() //Use value classes){}
+    val id: DeviceID = DeviceID()
 ) {
 
     abstract val allOutputs: List<DeviceOutput>
@@ -27,7 +29,7 @@ abstract class Device(
     abstract val mainAudioOutputElement: Element?
 
     @Composable
-    abstract fun InnerGUI(
+    abstract fun DeviceScreen(
         allDevices: List<Device>,
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit

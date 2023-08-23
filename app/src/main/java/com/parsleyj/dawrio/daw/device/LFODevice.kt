@@ -123,7 +123,7 @@ class LFODevice : Device("LFO", icon = lfoIcon) {
 
 
     @Composable
-    override fun InnerGUI(
+    override fun DeviceScreen(
         allDevices: List<Device>,
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit

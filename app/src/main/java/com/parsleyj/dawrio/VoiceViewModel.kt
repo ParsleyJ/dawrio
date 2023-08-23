@@ -6,6 +6,7 @@ import com.parsleyj.dawrio.daw.Voice
 import com.parsleyj.dawrio.daw.device.Connection
 import com.parsleyj.dawrio.daw.device.Device
 import com.parsleyj.dawrio.daw.device.DeviceCreator
+import com.parsleyj.dawrio.daw.device.DeviceID
 import com.parsleyj.dawrio.daw.device.DeviceInput
 import com.parsleyj.dawrio.daw.device.DeviceOutput
 import kotlinx.coroutines.flow.Flow
@@ -74,9 +75,9 @@ class VoiceViewModel : ViewModel() {
     }
 
 
-    inline fun <reified T : Device> getDevice(deviceUUID: UUID): Flow<T?> {
+    inline fun <reified T : Device> getDevice(deviceID: DeviceID): Flow<T?> {
         return devices.transform { list ->
-            (list.find { it.id == deviceUUID } as? T)?.let { emit(it) } ?: emit(null)
+            (list.find { it.id == deviceID } as? T)?.let { emit(it) } ?: emit(null)
         }
     }
 

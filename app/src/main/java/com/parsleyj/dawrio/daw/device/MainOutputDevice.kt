@@ -60,7 +60,7 @@ class MainOutputDevice(label: String) : Device(
         when (it) {
             0 -> volume.outAudioL
             1 -> volume.outAudioR
-            else -> throw RuntimeException("Invalid channel: $id")
+            else -> throw RuntimeException("Invalid channel: $it")
         }
     }
 
@@ -83,7 +83,7 @@ class MainOutputDevice(label: String) : Device(
     override val mainAudioOutputElement: Element get() = volume
 
     @Composable
-    override fun InnerGUI(
+    override fun DeviceScreen(
         allDevices: List<Device>,
         allConnections: List<Connection>,
         onConnectChangeRequest: (input: DeviceInput, output: DeviceOutput?) -> Unit

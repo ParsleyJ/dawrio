@@ -5,12 +5,15 @@ import com.parsleyj.dawrio.daw.elementroute.ElementOutPort
 import com.parsleyj.dawrio.daw.elementroute.Route
 import java.util.UUID
 
+@JvmInline
+value class DeviceInputID(val uuid: UUID = UUID.randomUUID())
+
 class DeviceInput(
     val device: Device,
     val name: String,
     val isMain: Boolean,
     val type: DeviceStreamType,
-    val id: UUID = UUID.randomUUID(),
+    val id: DeviceInputID = DeviceInputID(),
     val onConnect: RouteListBuilder.(output: DeviceOutput) -> Unit,
 ) {
     fun compatibleWith(output: DeviceOutput): Boolean {

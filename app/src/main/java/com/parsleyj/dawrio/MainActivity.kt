@@ -39,6 +39,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.parsleyj.dawrio.Engine.stopEngine
+import com.parsleyj.dawrio.daw.device.DeviceID
 import com.parsleyj.dawrio.ui.composables.AddDeviceButton
 import com.parsleyj.dawrio.ui.composables.PushGateButton
 import com.parsleyj.dawrio.ui.theme.DawrioTheme
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
                 fun movableDevices(): List<@Composable (Modifier) -> Unit> {
                     return devices.map { dev ->
-                        deviceMap.getOrPut(dev.id) {
+                        deviceMap.getOrPut(dev.id.toUUID) {
                             movableContentOf { modifier: Modifier ->
                                 dev.DeviceGUI(
                                     modifier = modifier,
@@ -100,7 +101,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 items(
                                     count = devices.size,
-                                    key = { devices[it].id }
+                                    key = { devices[it].id.toUUID }
                                 ) { index ->
                                     AddDeviceButton(
                                         modifier = Modifier

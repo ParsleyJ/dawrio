@@ -100,8 +100,8 @@ VolumeMeter::VolumeMeter(size_t bufferSize) {
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_parsleyj_dawrio_daw_element_VolumeMeter_00024Companion_createVolumeMeter(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jint buffer_size
 ) {
     return reinterpret_cast<jlong>(new VolumeMeter(buffer_size));

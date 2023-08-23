@@ -1,13 +1,13 @@
 
 
-#include <math.h>
+#include <cmath>
 #include "ValueAdder.h"
 
 void ValueAdder::processState(int32_t sampleRate) {
     float value =
         readInput(0) +in2Scale_ * readInput(1) + in2Offset_;
 
-    if(clip){
+    if(isClippingInRange_){
         float minRange = fmin(totalClipRangeStart_, totalClipRangeEnd_);
         float maxRange = fmax(totalClipRangeStart_, totalClipRangeEnd_);
         value = fmax(minRange, value);
@@ -43,11 +43,11 @@ void ValueAdder::setIn2Scale(float in2Scale) {
 
 
 bool ValueAdder::isClip() const {
-    return clip;
+    return isClippingInRange_;
 }
 
 void ValueAdder::setClip(bool clip) {
-    ValueAdder::clip = clip;
+    ValueAdder::isClippingInRange_ = clip;
 }
 
 float ValueAdder::getTotalClipRangeStart() const {
@@ -68,7 +68,7 @@ void ValueAdder::setTotalClipRangeEnd(float totalClipRangeEnd) {
 
 ValueAdder::ValueAdder(float in2Scale, float in2Offset, bool clip, float totalClipRangeStart,
                        float totalClipRangeEnd) : in2Scale_(in2Scale), in2Offset_(in2Offset),
-                                                  clip(clip),
+                                                  isClippingInRange_(clip),
                                                   totalClipRangeStart_(totalClipRangeStart),
                                                   totalClipRangeEnd_(totalClipRangeEnd) {}
 
@@ -76,8 +76,8 @@ ValueAdder::ValueAdder(float in2Scale, float in2Offset, bool clip, float totalCl
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_createValueAdder(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jfloat scale,
     jfloat offset,
     jboolean clip,
@@ -89,8 +89,8 @@ Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_createValueAdder(
 extern "C"
 JNIEXPORT jfloat JNICALL
 Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_getScale2(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jlong address
 ) {
     return reinterpret_cast<ValueAdder *>(address)->getIn2Scale();
@@ -98,8 +98,8 @@ Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_getScale2(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_setScale2(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jlong address,
     jfloat value
 ) {
@@ -108,8 +108,8 @@ Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_setScale2(
 extern "C"
 JNIEXPORT jfloat JNICALL
 Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_getOffset2(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jlong address
 ) {
     return reinterpret_cast<ValueAdder *>(address)->getIn2Offset();
@@ -117,8 +117,8 @@ Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_getOffset2(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_parsleyj_dawrio_daw_element_ValueAdder_00024Companion_setOffset2(
-    JNIEnv *env,
-    jobject thiz,
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
     jlong address,
     jfloat value
 ) {

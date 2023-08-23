@@ -8,7 +8,7 @@
 constexpr int32_t kBufferSizeInBursts = 2;
 
 aaudio_data_callback_result_t dataCallback(
-    AAudioStream *stream,
+    [[maybe_unused]] AAudioStream *stream,
     void *userData,
     void *audioData,
     int32_t numFrames
@@ -19,7 +19,7 @@ aaudio_data_callback_result_t dataCallback(
 }
 
 void errorCallback(
-    AAudioStream *stream,
+    [[maybe_unused]] AAudioStream *stream,
     void *userData,
     aaudio_result_t error
 ) {

@@ -50,7 +50,7 @@ private:
     float output_ = 0.0f;
     float in2Scale_ = 1.0f;
     float in2Offset_ = 0.0f;
-    bool clip = true;
+    bool isClippingInRange_ = true;
     float totalClipRangeStart_ = 0.0f;
     float totalClipRangeEnd_ = 0.0f;
 };

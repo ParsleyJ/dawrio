@@ -24,13 +24,13 @@ void LFO::processState(int32_t sampleRate) {
 
     float out;
     if (type == Sin) {
-        out = (float) (0.5*sin(two_pi * this->x_)+0.5);
+        out = (float) (0.5 * sin(two_pi * this->x_) + 0.5);
     } else {
         if (type == SawUp) {
             out = this->x_;
-        }else if(type == SawDown) {
-            out = 1.0f -this->x_;
-        }else if (type == Square) {
+        } else if (type == SawDown) {
+            out = 1.0f - this->x_;
+        } else if (type == Square) {
             out = (float) (this->x_ >= 0.5f);
         } else {
             out = 0.0f;
@@ -43,6 +43,9 @@ void LFO::processState(int32_t sampleRate) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createLFO(JNIEnv *env, jobject thiz) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_createLFO(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz
+) {
     return reinterpret_cast<jlong>(new LFO());
 }

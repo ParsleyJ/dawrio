@@ -5,45 +5,67 @@
 static AudioEngine *audioEngine = new AudioEngine();
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_Engine_setSoundOn(JNIEnv *env, jobject jthis, jboolean on) {
+Java_com_parsleyj_dawrio_Engine_setSoundOn(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject jthis,
+    jboolean on
+) {
     audioEngine->setSoundOn(on);
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_parsleyj_dawrio_Engine_isSoundOn(JNIEnv *env, jobject thiz) {
+Java_com_parsleyj_dawrio_Engine_isSoundOn(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz
+) {
     return audioEngine->isSoundOn();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_Engine_startEngine(JNIEnv *env, jobject jthis) {
+Java_com_parsleyj_dawrio_Engine_startEngine(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject jthis
+) {
     audioEngine->start();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_Engine_stopEngine(JNIEnv *env, jobject jthis) {
+Java_com_parsleyj_dawrio_Engine_stopEngine(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject jthis
+) {
     audioEngine->start();
 }
 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_destroy(JNIEnv *env, jobject thiz,
-                                                                    jlong device_address) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_destroy(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong device_address
+) {
     delete reinterpret_cast<Element *>(device_address);
 }
 extern "C"
 JNIEXPORT jfloat JNICALL
-Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_readElementOutput(JNIEnv *env,
-                                                                              jobject thiz,
-                                                                              jlong device_address,
-                                                                              jint port_number) {
+Java_com_parsleyj_dawrio_daw_element_Element_00024Companion_readElementOutput(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong device_address,
+    jint port_number
+) {
     return reinterpret_cast<Element *>(device_address)->emitOutput(port_number);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_parsleyj_dawrio_Engine_setVoice(JNIEnv *env, jobject thiz, jlong address) {
+Java_com_parsleyj_dawrio_Engine_setVoice(
+    [[maybe_unused]] JNIEnv *env,
+    [[maybe_unused]] jobject thiz,
+    jlong address
+) {
     audioEngine->setVoice(reinterpret_cast<Voice *>(address));
 }
 

@@ -16,7 +16,7 @@ public:
     size_t outPort;
     jlong inDevice;
     size_t inPort;
-    bool isActive();
+    bool isActive() const;
 };
 
 

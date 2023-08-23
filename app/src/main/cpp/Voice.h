@@ -30,7 +30,7 @@ public:
         return this->sampleRate_;
     }
 
-    void setAmplitude(double amplitude) {
+    void setAmplitude([[maybe_unused]] double amplitude) {
         this->amplitude_.load();
     }
 

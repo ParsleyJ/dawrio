@@ -49,10 +49,7 @@ In this one-week timeframe, I developed a prototype UI for the core technology o
 
 (**WARNING: VOLUME**)
 
-<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/9f558dcf-a8d3-411e-8c2c-3c64ad1b38fe" 
-type="video/mp4">
-</video>
-
+https://github.com/ParsleyJ/dawrio/assets/3945726/9f558dcf-a8d3-411e-8c2c-3c64ad1b38fe
 
 To ensure full functionality, I also created the audio engine and essential components for audio 
 processing in C++.
@@ -74,9 +71,7 @@ receive Modulation signals from other devices.
 Even with just these initial two devices and their capabilities, Dawrio provides the means to 
 synthesize some interesting sounds.
 
-<video src="https://github.com/ParsleyJ/dawrio/assets/3945726/f4a13aaf-532d-4d47-a04a-fa4257e3f0aa" 
-type="video/mp4">
-</video>
+https://github.com/ParsleyJ/dawrio/assets/3945726/f4a13aaf-532d-4d47-a04a-fa4257e3f0aa
 
 
 
